@@ -416,6 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
           diagnostik: "Tes Diagnostik",
           dashboard: "Beranda Belajar",
           book: "Baca Buku",
+          videos: "Video Tutorial",
           intro: "Pengenalan Gambar Teknik",
           tools: "Alat Gambar",
           pencils: "Laboratorium Pensil",

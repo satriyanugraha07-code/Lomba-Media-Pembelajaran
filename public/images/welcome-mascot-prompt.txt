@@ -1,0 +1,13 @@
+SDRAFT welcome mascot
+Generated using the built-in image_gen tool, transparent_background: true.
+Reference: public/images/studio-banner.webp (identity and rendering style).
+The project asset is an unmodified copy preserving its alpha channel.
+
+Use case: stylized-concept
+Asset type: transparent half-body mascot for the first-visit animated welcome bumper of SDRAFT, an Indonesian technical drawing learning website.
+Input images: Image 1 is a character identity and 3D rendering style reference. Use only the friendly boy in the teal hoodie from that image, preserving his face, black wavy hair, warm medium skin, large dark eyes, and hoodie design. Do not reproduce the room or desk.
+Primary request: recreate this same boy as a welcoming mascot facing toward the viewer with a slight friendly three-quarter turn. He smiles warmly. One hand is lifted next to his head in an open-palm greeting, fingers natural and fully visible; the other hand holds a dark drawing pencil near his chest.
+Composition/framing: single centered half-body character, full head and hair through waist, both arms and hands fully visible, generous transparent padding around the fingers and above hair, no cropped anatomy.
+Style/medium: polished soft 3D cartoon render, exactly matching the reference character's rounded shapes, tactile teal hoodie, soft studio lighting and charming proportions. Warm approachable student character.
+Scene/backdrop: genuine transparent background and clean alpha edges. No environment, floor, backdrop, desk, scenery, other props, or extra characters.
+Constraints: retain the existing boy's identity and teal hoodie, two hands with five fingers each, one dark drawing pencil only, no text, letters, logos, watermark, diagrams or frame. Entire visible character and pencil must be inside the image.

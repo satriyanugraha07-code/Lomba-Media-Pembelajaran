@@ -18,8 +18,14 @@ import { initPageMotion } from './page-motion.js';
 import { initDisplaySettings } from './display-settings.js';
 import { isModuleLocked } from './module-availability.js';
 import { initModuleLocks } from './module-locks.js';
+import { initWelcomeBumper } from './welcome-bumper.js';
+import './welcome-bumper.css';
+import { initVideoTutorial } from './video-tutorial.js';
+import './video-tutorial.css';
+import './auth-refresh.css';
 
 document.addEventListener('DOMContentLoaded', () => {
+  initWelcomeBumper();
   initDisplaySettings();
   initModuleLocks();
   const scenePreview = document.getElementById('learning-scene');
@@ -34,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroScene();
   }
   if (!isModuleLocked('lkpd')) initLkpd();
+  initVideoTutorial();
   initAuth();
   if (!isModuleLocked('diagnostik')) initDiagnostik();
   if (!isModuleLocked('quiz')) initPostTest();
@@ -67,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const categories = {
-    book: 'materi', intro: 'materi', lines: 'materi',
+    book: 'materi', videos: 'materi', intro: 'materi', lines: 'materi',
     tools: 'praktik', pencils: 'praktik', etiket: 'praktik', projection: 'praktik', model3d: 'praktik', lkpd: 'praktik',
     quiz: 'evaluasi'
   };

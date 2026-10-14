@@ -7,6 +7,29 @@
   <meta name="description" content="Media pembelajaran gambar teknik manual interaktif untuk mengenal alat, pensil, garis ISO, etiket, proyeksi, dan menguji pemahaman.">
   <meta name="theme-color" content="#f6f9ff">
   <meta name="color-scheme" content="light">
+  <script id="welcome-bootstrap">
+    (() => {
+      const key = 'sdraft_welcome_seen';
+      let seen = false;
+      try { seen = localStorage.getItem(key) === '1'; } catch {}
+      if (!seen) try { seen = sessionStorage.getItem(key) === '1'; } catch {}
+      if (!seen) try { seen = document.cookie.split(';').some(value => value.trim() === key + '=1'); } catch {}
+      if (seen) return;
+      document.documentElement.dataset.welcome = 'pending';
+      // Keep the learning page usable if its module or assets cannot start.
+      setTimeout(() => {
+        if (document.documentElement.dataset.welcome === 'pending') {
+          delete document.documentElement.dataset.welcome;
+        }
+      }, 10000);
+    })();
+  </script>
+  <style>
+    html[data-welcome="pending"] body::before {
+      content: ''; position: fixed; inset: 0; z-index: 99998;
+      background: #eaf9ff;
+    }
+  </style>
   <meta property="og:type" content="website">
   <meta property="og:title" content="SDRAFT — Ruang Belajar Gambar Teknik">
   <meta property="og:description" content="Belajar, praktik, dan uji kompetensi gambar teknik dalam satu ruang interaktif.">
@@ -49,6 +72,10 @@
         <div class="nav-item" data-target="book">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5.3C9.7 3.8 6.7 3.5 3 4.1v15.2c3.7-.6 6.7-.3 9 1.2 2.3-1.5 5.3-1.8 9-1.2V4.1c-3.7-.6-6.7-.3-9 1.2Z"/><path d="M12 5.3v15.2"/></svg>
           <span>Baca Buku</span>
+        </div>
+        <div class="nav-item" data-target="videos">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 8 6 4-6 4Z"/></svg>
+          <span>Video Tutorial</span>
         </div>
         <div class="nav-item" data-target="intro">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2.5-9 4.8 9 4.8 9-4.8-9-4.8Z"/><path d="m3 12 9 4.8 9-4.8M3 16.8l9 4.7 9-4.7"/></svg>
@@ -193,6 +220,7 @@
                     </svg>
                     <span>Isi / Ganti Identitas</span>
                   </button>
+                  <button type="button" id="btn-logout-account" class="btn-logout" hidden><span>Keluar</span></button>
                 </div>
               </div>
             </div>
@@ -674,6 +702,10 @@
               <span class="studio-card-art studio-art-peach"><img src="/ICON/buku.png" alt="" width="160" height="140" loading="lazy"></span>
               <span class="studio-card-bottom"><span class="gamtek-card-title">Baca buku</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
             </button>
+            <button type="button" class="module-card studio-card" data-module="videos">
+              <span class="studio-card-art studio-art-mint"><img src="/ICON/video-tutorial.svg" alt="" width="160" height="140" loading="lazy"></span>
+              <span class="studio-card-bottom"><span class="gamtek-card-title">Video tutorial</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
+            </button>
             <button type="button" class="module-card studio-card" data-module="tools">
               <span class="studio-card-art studio-art-mint"><img src="/images/tools/drawing-kit-soft.png" alt="" width="160" height="140" loading="lazy"></span>
               <span class="studio-card-bottom"><span class="gamtek-card-title">Kenali alat gambar</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
@@ -775,6 +807,7 @@
       </section>
 
       <section id="book" class="app-section" aria-label="Baca buku gambar teknik"></section>
+      <section id="videos" class="app-section" aria-label="Video tutorial gambar teknik"></section>
 
       <!-- ================= PENGENALAN GAMBAR TEKNIK SECTION ================= -->
       <section id="intro" class="app-section">
@@ -2214,6 +2247,7 @@
               required
               autocomplete="name"
               minlength="3"
+              maxlength="100"
             >
           </div>
         </div>
@@ -2240,6 +2274,8 @@
                 placeholder="Contoh: 14"
                 min="1"
                 max="99"
+                step="1"
+                inputmode="numeric"
                 required
               >
             </div>
@@ -2262,13 +2298,14 @@
                 name="kelas"
                 class="auth-input"
                 placeholder="Contoh: X TP 1 / X Mesin"
+                maxlength="60"
                 required
               >
             </div>
           </div>
         </div>
 
-        <div id="auth-alert" class="auth-alert" style="display: none;"></div>
+        <div id="auth-alert" class="auth-alert" role="alert" style="display: none;"></div>
 
         <button type="submit" id="auth-submit-btn" class="auth-submit-btn">
           <span class="btn-text">Mulai Belajar Gambar Teknik</span>

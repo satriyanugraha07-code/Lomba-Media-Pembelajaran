@@ -122,6 +122,29 @@
   letter-spacing: .06em;
 }
 #lkpd .lkpd-job-strip strong { color: #1c3b55; font-size: 15px; }
+#lkpd .lkpd-job-selector { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 22px 0 0; }
+#lkpd .lkpd-job-selector button { display: grid; gap: 5px; text-align: left; min-height: 90px; padding: 16px 20px; border: 1px solid #d4e5ee; border-radius: 20px; background: #fff; color: #274b65; cursor: pointer; }
+#lkpd .lkpd-job-selector button > span { color: #568294; font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+#lkpd .lkpd-job-selector button > strong { color: inherit; font-size: 14px; line-height: 1.4; }
+#lkpd .lkpd-job-selector button > small { color: #678497; font-size: 10px; }
+#lkpd .lkpd-job-selector button[aria-pressed='true'] { border-color: #66b9cc; color: #087b96; background: linear-gradient(120deg, #e8f8ff, #f0fbf7); box-shadow: inset 0 0 0 1px #a8dcea; }
+#lkpd .lkpd-job-selector button:hover { border-color: #66b9cc; }
+#lkpd .lkpd-pdf-lesson .lkpd-job-selector { margin-top: 0; margin-bottom: 20px; }
+#lkpd .lkpd-pdf-panel h2 { color: #163a58; font-size: clamp(22px, 3vw, 30px); margin: 0; letter-spacing: -.035em; }
+#lkpd .lkpd-pdf-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+#lkpd .lkpd-pdf-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+#lkpd .lkpd-pdf-toolbar p { margin: 0; color: #53758a; font-size: 11px; }
+#lkpd .lkpd-pdf-toolbar > div { display: flex; align-items: center; gap: 9px; }
+#lkpd .lkpd-pdf-toolbar output { font-size: 11px; min-width: 42px; text-align: center; color: #356781; }
+#lkpd .lkpd-pdf-viewport { width: 100%; max-height: 85dvh; min-height: 240px; padding: 12px; overflow: auto; border: 1px solid #d1e3ec; border-radius: 14px; background: #edf3f6; }
+#lkpd .lkpd-pdf-viewport canvas { display: block; margin: 0 auto; background: #fff; box-shadow: 0 3px 14px #31536c1c; }
+#lkpd .lkpd-pdf-panel > .lkpd-small-note { color: #58768b; font-size: 11px; margin: 12px 0 0; }
+#lkpd .lkpd-sheet-viewport { overflow: auto; }
+#lkpd .lkpd-sheet-viewport.is-portrait { max-width: 820px; margin: 0 auto; }
+#lkpd .lkpd-sheet-zoom { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; margin: -3px 0 20px; }
+#lkpd .lkpd-sheet-zoom > span { color: #658295; font-size: 10px; margin-right: auto; }
+#lkpd .lkpd-sheet-zoom > output { min-width: 43px; text-align: center; color: #356a82; font-size: 11px; font-weight: 700; }
+#lkpd .lkpd-sheet-zoom > button { padding: 6px 13px; min-width: 40px; font-size: 17px; }
 #lkpd .lkpd-job-context { color: #658194; font-size: 10px; }
 #lkpd .lkpd-future-jobs { position: relative; flex-shrink: 0; }
 #lkpd .lkpd-future-jobs summary { display: flex; align-items: center; gap: 9px; cursor: pointer; padding: 8px 10px; border-radius: 12px; color: #4a6b82; font-size: 11px; font-weight: 700; }

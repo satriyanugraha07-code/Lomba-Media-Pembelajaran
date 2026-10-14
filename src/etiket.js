@@ -2,6 +2,7 @@ import { ETIKET_TEMPLATES, createEtiketDrawing } from './etiket-drawing.js';
 import { etiketFieldInfo, etiketDefaults, normaliseEtiketValues, etiketDrawingValues } from './etiket-data.js';
 import { lessonMarkup, fieldControl, sheetDrawing } from './etiket-markup.js';
 import { openEtiketPrintPreview } from './etiket-print.js';
+import { getStudentSession } from './student-session.js';
 
 const STORAGE_KEY = 'sdraft-etiket-v2';
 const primaryFields = ['school', 'title', 'drawingNumber', 'scale', 'unit', 'drawnBy', 'className', 'checkedBy', 'approvedBy', 'date', 'paper', 'projection', 'notes'];
@@ -28,7 +29,7 @@ export function initEtiketLesson() {
   } catch { storageAvailable = false; }
   if (!drawerEdited) {
     try {
-      const student = JSON.parse(localStorage.getItem('draftlab_student_session') || 'null');
+      const student = getStudentSession();
       values = normaliseEtiketValues({ ...values, drawnBy: student?.nama || 'NAMA SISWA' });
     } catch { /* Invalid saved student data does not prevent the lesson from opening. */ }
   }
@@ -166,7 +167,7 @@ export function initEtiketLesson() {
   get('etiket-zoom-reset').addEventListener('click', () => setZoom(1));
   get('etiket-reset').addEventListener('click', () => {
     values = etiketDefaults(); drawerEdited = false; edited.clear();
-    try { const student = JSON.parse(localStorage.getItem('draftlab_student_session') || 'null'); if (student?.nama) values = normaliseEtiketValues({ ...values, drawnBy: student.nama }); } catch { /* Keep the example name. */ }
+    try { const student = getStudentSession(); if (student?.nama) values = normaliseEtiketValues({ ...values, drawnBy: student.nama }); } catch { /* Keep the example name. */ }
     renderForm(); renderDrawing(); save();
     get('etiket-status').textContent = 'Isian kembali ke contoh latihan.';
   });

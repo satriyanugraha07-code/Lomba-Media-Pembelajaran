@@ -39,13 +39,25 @@ export const LKPD_SHEET_CSS = `
   .lkpd-sheet-number > div { display: flex; flex-direction: column; padding: .2cqw .45cqw; min-height: 100%; }
   .lkpd-sheet-number > div + div { border-left: 1px solid #35434b; align-items: center; }
   .lkpd-sheet-number span { font-size: 1.05cqw; }
+  .lkpd-paper-portrait { aspect-ratio: 210 / 297; max-width: 780px; margin: 0 auto; }
+  .lkpd-paper-portrait .lkpd-drawing-frame { inset: 1.684% 2.381% 1.684% 9.524%; }
+  .lkpd-paper-portrait .lkpd-sheet-patterns { top: 7.5%; left: 12%; width: 80%; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 3cqw; row-gap: 7cqw; }
+  .lkpd-paper-portrait .lkpd-sheet-pattern { aspect-ratio: auto; }
+  .lkpd-paper-portrait .lkpd-sheet-pattern > .lkpd-pattern-svg { height: auto; aspect-ratio: 1; }
+  .lkpd-paper-portrait .lkpd-sheet-caption { display: block; padding: .6cqw 0; font: italic 1.55cqw/1.6 Arial, sans-serif; text-align: center; }
+  .lkpd-paper-portrait .lkpd-sheet-etiket { width: 100%; height: 8.71%; font-size: 1.1cqw; }
+  .lkpd-paper-portrait .lkpd-sheet-cell b { font-size: 1cqw; }
+  .lkpd-paper-portrait .lkpd-sheet-school { font-size: 1.4cqw; }
+  .lkpd-paper-portrait .lkpd-sheet-title span { font-size: 1.3cqw; }
+  .lkpd-paper-portrait .lkpd-sheet-note span { font-size: 1cqw; }
+  .lkpd-paper-portrait .lkpd-sheet-number span { font-size: 1.3cqw; }
 `;
 
 const field = (key, value, fallback) => `<span data-sheet-field="${key}">${escape(value || fallback)}</span>`;
 
-export function createLkpdDrawingSheet({ patterns = [], interactive = false, payload = {} } = {}) {
+export function createLkpdDrawingSheet({ patterns = [], interactive = false, payload = {}, jobId = 1, title = 'GARIS DALAM GAMBAR', note = 'Jarak 7 mm dan 3,5 mm<br>Kotak 70 × 70 mm', portrait = false, renderPattern = createLkpdPattern } = {}) {
   const tag = interactive ? 'button' : 'div';
-  return `<div class="lkpd-drawing-paper" role="group" aria-label="Lembar gambar Job 1: enam pola dalam susunan tiga kolom dan dua baris">
+  return `<div class="lkpd-drawing-paper${portrait ? ' lkpd-paper-portrait' : ''}" role="group" aria-label="${portrait ? 'Lembar gambar Job 2 Bagian 1: empat konstruksi dalam susunan dua kolom dan dua baris' : 'Lembar gambar Job 1: enam pola dalam susunan tiga kolom dan dua baris'}">
     <div class="lkpd-drawing-frame">
       <div class="lkpd-sheet-etiket" aria-label="Etiket lembar gambar">
         <div class="lkpd-sheet-cell lkpd-sheet-projection"><b>Proyeksi</b><svg viewBox="0 0 92 36" fill="none" stroke="currentColor" stroke-width=".8" aria-hidden="true"><circle cx="20" cy="18" r="11"/><circle cx="20" cy="18" r="5"/><path d="M5 18h30M20 3v30M45 11l31-7v28l-31-7ZM40 18h41"/></svg></div>
@@ -56,11 +68,11 @@ export function createLkpdDrawingSheet({ patterns = [], interactive = false, pay
         <div class="lkpd-sheet-cell lkpd-sheet-class"><b>KELAS</b>${field('className', payload.className, 'Kelas')}</div>
         <div class="lkpd-sheet-cell lkpd-sheet-check"><b>DILIHAT</b>${field('paraf', payload.paraf, 'Paraf guru')}</div>
         <div class="lkpd-sheet-cell lkpd-sheet-school">SMK N 2 DEPOK SLEMAN</div>
-        <div class="lkpd-sheet-cell lkpd-sheet-title"><b>Nama:</b><span>GARIS DALAM GAMBAR</span></div>
-        <div class="lkpd-sheet-cell lkpd-sheet-note"><b>Keterangan:</b><span>Jarak 7 mm dan 3,5 mm<br>Kotak 70 × 70 mm</span></div>
-        <div class="lkpd-sheet-cell lkpd-sheet-number"><div><b>NOMOR:</b><span>JOB 01</span></div><div><b>FORM:</b><span>A4</span></div></div>
+        <div class="lkpd-sheet-cell lkpd-sheet-title"><b>Nama:</b><span>${escape(title)}</span></div>
+        <div class="lkpd-sheet-cell lkpd-sheet-note"><b>Keterangan:</b><span>${note}</span></div>
+        <div class="lkpd-sheet-cell lkpd-sheet-number"><div><b>NOMOR:</b><span>JOB ${String(jobId).padStart(2, '0')}</span></div><div><b>FORM:</b><span>A4</span></div></div>
       </div>
     </div>
-    <div class="lkpd-sheet-patterns">${patterns.map(pattern => `<${tag} class="lkpd-sheet-pattern" ${interactive ? `type="button" data-pattern="${pattern.id}" aria-haspopup="dialog" aria-label="Pola ${pattern.id}: ${escape(pattern.title)} — buka cara pengerjaan" title="${escape(pattern.title)} · lihat cara pengerjaan"` : `aria-label="${escape(pattern.title)}"`}>${createLkpdPattern(pattern.id, { decorative: interactive, paper: true })}${interactive ? '<span class="lkpd-sheet-tip" aria-hidden="true">Lihat cara pengerjaan ↗</span>' : ''}</${tag}>`).join('')}</div>
+    <div class="lkpd-sheet-patterns">${patterns.map(pattern => `<${tag} class="lkpd-sheet-pattern" ${interactive ? `type="button" data-pattern="${pattern.id}" aria-haspopup="dialog" aria-label="${portrait ? 'Konstruksi' : 'Pola'} ${pattern.id}: ${escape(pattern.title)} — buka cara pengerjaan" title="${escape(pattern.title)} · lihat cara pengerjaan"` : `aria-label="${escape(pattern.title)}"`}>${renderPattern(pattern.id, { decorative: interactive, paper: true })}${portrait ? `<span class="lkpd-sheet-caption">${escape(pattern.title)}</span>` : ''}${interactive ? '<span class="lkpd-sheet-tip" aria-hidden="true">Lihat cara pengerjaan ↗</span>' : ''}</${tag}>`).join('')}</div>
   </div>`;
 }

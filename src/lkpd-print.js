@@ -1,5 +1,4 @@
-import { LKPD_PATTERNS, LKPD_CHECKS, LKPD_MEASUREMENT_NOTE, LKPD_SCALE_NOTE } from './lkpd-markup.js';
-import { createLkpdPattern } from './lkpd-drawing.js';
+import { LKPD_JOB1 } from './lkpd-markup.js';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
 
@@ -33,24 +32,27 @@ const paperCss = `
   .lkpd-paper-assessment-row { display: flex; justify-content: space-between; gap: 8mm; font-size: 9pt; }
   .lkpd-paper-assessment-row p { width: 50%; overflow-wrap: anywhere; }
   .lkpd-paper-notes { margin-top: 2mm !important; min-height: 12mm; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 8pt; }
+  .lkpd-paper-job2 .lkpd-paper-patterns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2mm 7mm; }
+  .lkpd-paper-job2 .lkpd-paper-pattern svg { width: 49mm; height: 49mm; }
+  .lkpd-paper-job2 .lkpd-paper-heading { margin-top: 3mm !important; }
   .lkpd-paper-footer { margin-top: 4mm; padding-top: 2mm; border-top: .2mm solid #c5d3db; font-size: 7pt; color: #4e6f82; }
 `;
 
-export function createLkpdPrintSheet(payload = {}) {
+export function createLkpdPrintSheet(payload = {}, job = LKPD_JOB1) {
   const value = key => escape(payload[key] || '................................');
-  return `<article class="lkpd-paper" aria-label="Lembar kerja Job 1 untuk dicetak"><header class="lkpd-paper-header"><div><p class="lkpd-paper-kicker">LEMBAR KERJA PESERTA DIDIK · JOB 01</p><h1>Garis dalam gambar</h1><p class="lkpd-paper-subtitle">SMK N 2 Depok Sleman · Gambar Teknik Manual · Kelas X</p></div><div class="lkpd-paper-brand">S-DRAFT<span>Latih tangan, rapikan garis.</span></div></header>
+  return `<article class="lkpd-paper${job.id === 2 ? ' lkpd-paper-job2' : ''}" aria-label="Lembar kerja ${job.label} untuk dicetak"><header class="lkpd-paper-header"><div><p class="lkpd-paper-kicker">LEMBAR KERJA PESERTA DIDIK · ${job.label.toUpperCase()}</p><h1>${job.title}</h1><p class="lkpd-paper-subtitle">SMK N 2 Depok Sleman · Gambar Teknik Manual · Kelas X</p></div><div class="lkpd-paper-brand">S-DRAFT<span>Latih tangan, rapikan garis.</span></div></header>
     <div class="lkpd-paper-identity"><p><b>Nama</b> ${value('name')}</p><p><b>Kelas</b> ${value('className')}</p><p><b>No. absen</b> ${value('absen')}</p><p><b>Tanggal</b> ${value('date')}</p></div>
-    <div class="lkpd-paper-purpose"><b>Tujuan:</b> Membuat enam pola dengan arah, jarak, serta tebal-tipis garis yang rapi.<p class="lkpd-paper-tools"><b>Alat:</b> kertas A4, pensil, mistar, sepasang segitiga, jangka, dan penghapus.</p><p class="lkpd-paper-measurements">${LKPD_MEASUREMENT_NOTE}</p></div>
-    <h2 class="lkpd-paper-heading">Amati dan gambar ulang enam pola berikut.</h2><div class="lkpd-paper-patterns">${LKPD_PATTERNS.map(pattern => `<figure class="lkpd-paper-pattern">${createLkpdPattern(pattern.id)}<figcaption>${pattern.id}. ${pattern.title}</figcaption></figure>`).join('')}</div>
-    <div class="lkpd-paper-bottom"><section><h2 class="lkpd-paper-heading">Tugas singkat</h2><ol><li>Isi identitas dan siapkan alat.</li><li>Amati contoh dan ikuti panduan pola.</li><li>Gambar ulang kotak 70 × 70 mm pada kertas A4 terpisah. Atur penempatan sesuai arahan guru.</li><li>Periksa hasil sebelum dikumpulkan.</li></ol></section><section><h2 class="lkpd-paper-heading">Cek sebelum dikumpulkan</h2><ul class="lkpd-paper-checks">${LKPD_CHECKS.map((label, index) => `<li><span class="lkpd-paper-checkmark">${payload.checks?.[index] ? '✓' : ''}</span>${label}</li>`).join('')}</ul></section></div>
-    <section class="lkpd-paper-assessment"><div class="lkpd-paper-assessment-row"><p><b>Nilai:</b> ${value('score')} / 100</p><p><b>Paraf guru:</b> ${value('paraf')}</p></div><p class="lkpd-paper-notes"><b>Catatan:</b> ${escape(payload.note || '........................................................................................................................................')}</p></section><footer class="lkpd-paper-footer">LKPD Job 1 · ${LKPD_SCALE_NOTE}</footer></article>`;
+    <div class="lkpd-paper-purpose"><b>Tujuan:</b> ${job.goal}<p class="lkpd-paper-tools"><b>Alat:</b> ${job.tools.join(', ')}.</p><p class="lkpd-paper-measurements">${job.measurementNote}</p></div>
+    <h2 class="lkpd-paper-heading">Amati dan gambar ulang ${job.id === 2 ? 'empat konstruksi' : 'enam pola'} berikut.</h2><div class="lkpd-paper-patterns">${job.patterns.map(pattern => `<figure class="lkpd-paper-pattern">${job.renderPattern(pattern.id)}<figcaption>${pattern.id}. ${pattern.title}</figcaption></figure>`).join('')}</div>
+    <div class="lkpd-paper-bottom"><section><h2 class="lkpd-paper-heading">Tugas singkat</h2><ol>${job.tasks.map(task => `<li>${task}</li>`).join('')}</ol></section><section><h2 class="lkpd-paper-heading">Cek sebelum dikumpulkan</h2><ul class="lkpd-paper-checks">${job.checks.map((label, index) => `<li><span class="lkpd-paper-checkmark">${payload.checks?.[index] ? '✓' : ''}</span>${label}</li>`).join('')}</ul></section></div>
+    <section class="lkpd-paper-assessment"><div class="lkpd-paper-assessment-row"><p><b>Nilai:</b> ${value('score')} / 100</p><p><b>Paraf guru:</b> ${value('paraf')}</p></div><p class="lkpd-paper-notes"><b>Catatan:</b> ${escape(payload.note || '........................................................................................................................................')}</p></section><footer class="lkpd-paper-footer">LKPD ${job.label} · ${job.scaleNote}</footer></article>`;
 }
 
-export function createLkpdPrintDocument(payload = {}) {
-  return `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>LKPD Job 1 — ${escape(payload.name || 'Garis dalam gambar')}</title><style>@page { size: A4 portrait; margin: 0; } html, body { margin: 0; padding: 0; background: #fff; } ${paperCss} @media print { .lkpd-paper { min-height: 0; } }</style></head><body>${createLkpdPrintSheet(payload)}</body></html>`;
+export function createLkpdPrintDocument(payload = {}, job = LKPD_JOB1) {
+  return `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>LKPD ${job.label} — ${escape(payload.name || job.title)}</title><style>@page { size: A4 portrait; margin: 0; } html, body { margin: 0; padding: 0; background: #fff; } ${paperCss} @media print { .lkpd-paper { min-height: 0; } }</style></head><body>${createLkpdPrintSheet(payload, job)}</body></html>`;
 }
 
-export function openLkpdPrintPreview(section, payload = {}) {
+export function openLkpdPrintPreview(section, payload = {}, job = LKPD_JOB1) {
   let dialog = section.querySelector('#lkpd-print-preview');
   if (!dialog) {
     dialog = document.createElement('dialog');
@@ -60,7 +62,7 @@ export function openLkpdPrintPreview(section, payload = {}) {
     dialog.setAttribute('aria-describedby', 'lkpd-print-description');
     section.append(dialog);
   }
-  dialog.innerHTML = `<style>${paperCss}</style><div class="lkpd-dialog-heading"><div><p class="lkpd-kicker">A4 POTRET · 210 × 297 MM</p><h3 id="lkpd-print-title">Pratinjau lembar kerjamu.</h3></div><button type="button" class="lkpd-dialog-close" aria-label="Tutup pratinjau cetak">×</button></div><p class="lkpd-print-description" id="lkpd-print-description">Identitas dan isianmu ikut dicetak. Pilih A4 dan skala 100% untuk lembar kerja. Contoh pola diperkecil; gambar latihan mengikuti angka 70 × 70 mm serta jarak 7 mm atau 3,5 mm. Pratinjau dapat digeser pada layar kecil.</p><div class="lkpd-print-viewport">${createLkpdPrintSheet(payload)}</div><div class="lkpd-print-dialog-actions"><p role="status" aria-live="polite" class="lkpd-print-status">Menyiapkan lembar cetak.</p><button type="button" class="lkpd-primary lkpd-print-action" disabled>Cetak / Simpan PDF</button></div>`;
+  dialog.innerHTML = `<style>${paperCss}</style><div class="lkpd-dialog-heading"><div><p class="lkpd-kicker">A4 POTRET · 210 × 297 MM</p><h3 id="lkpd-print-title">Pratinjau lembar kerjamu.</h3></div><button type="button" class="lkpd-dialog-close" aria-label="Tutup pratinjau cetak">×</button></div><p class="lkpd-print-description" id="lkpd-print-description">Identitas dan isianmu ikut dicetak. Pilih A4 dan skala 100% untuk lembar kerja. ${job.measurementNote} ${job.scaleNote} Pratinjau dapat digeser pada layar kecil.</p><div class="lkpd-print-viewport">${createLkpdPrintSheet(payload, job)}</div><div class="lkpd-print-dialog-actions"><p role="status" aria-live="polite" class="lkpd-print-status">Menyiapkan lembar cetak.</p><button type="button" class="lkpd-primary lkpd-print-action" disabled>Cetak / Simpan PDF</button></div>`;
   const status = dialog.querySelector('.lkpd-print-status');
   const button = dialog.querySelector('.lkpd-print-action');
   const iframe = document.createElement('iframe');
@@ -73,7 +75,7 @@ export function openLkpdPrintPreview(section, payload = {}) {
     button.disabled = false;
     status.textContent = 'Lembar siap. Pilih Cetak / Simpan PDF untuk membuka pilihan printer.';
   });
-  iframe.srcdoc = createLkpdPrintDocument(payload);
+  iframe.srcdoc = createLkpdPrintDocument(payload, job);
   dialog.append(iframe);
   dialog.querySelector('.lkpd-dialog-close').addEventListener('click', () => dialog.close());
   button.addEventListener('click', () => {

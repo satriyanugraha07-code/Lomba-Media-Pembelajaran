@@ -11,6 +11,7 @@
 const AUTH_STORAGE_KEY = 'draftlab_student_session';
 const HISTORY_STORAGE_KEY = 'draftlab_students_history';
 const SCRIPT_URL_STORAGE_KEY = 'draftlab_sheets_url';
+import { studentSessions, validateStudentIdentity } from '../src/student-session.js';
 
 import { renderDiagnostikRekapTable, exportDiagnostikToCsv } from './diagnostik.js';
 import { renderPostTestRekapTable, exportPostTestToCsv } from './post-test.js';
@@ -31,37 +32,27 @@ function isSupportedSheetUrl(value) {
 }
 
 export function getScriptUrl() {
-  const saved = localStorage.getItem(SCRIPT_URL_STORAGE_KEY);
+  let saved;
+  try { saved = localStorage.getItem(SCRIPT_URL_STORAGE_KEY); } catch {}
   if (saved && isSupportedSheetUrl(saved)) return saved;
   return DEFAULT_SCRIPT_URL;
 }
 
 export function setScriptUrl(url) {
   if (typeof url !== 'string' || !isSupportedSheetUrl(url.trim())) return false;
-  localStorage.setItem(SCRIPT_URL_STORAGE_KEY, url.trim());
-  return true;
+  try { localStorage.setItem(SCRIPT_URL_STORAGE_KEY, url.trim()); return true; } catch { return false; }
 }
 
 export function getStudentSession() {
-  try {
-    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (err) {
-    console.error('Error reading student session:', err);
-    return null;
-  }
+  return studentSessions.get();
 }
 
 export function saveStudentSession(studentData) {
-  try {
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(studentData));
-  } catch (err) {
-    console.error('Error saving student session:', err);
-  }
+  return studentSessions.save(studentData);
 }
 
 export function clearStudentSession() {
-  localStorage.removeItem(AUTH_STORAGE_KEY);
+  return studentSessions.clear();
 }
 
 /**
@@ -70,7 +61,8 @@ export function clearStudentSession() {
 export function getAllStudentsHistory() {
   try {
     const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const history = raw ? JSON.parse(raw) : [];
+    return Array.isArray(history) ? history.filter(item => item && typeof item.nama === 'string') : [];
   } catch (e) {
     return [];
   }
@@ -121,8 +113,8 @@ export function exportStudentsToCsv() {
     const no = index + 1;
     const waktu = `"${(row.waktu || row.timestamp || '').replace(/"/g, '""')}"`;
     const nama = `"${(row.nama || '').replace(/"/g, '""')}"`;
-    const absen = `"${(row.absen || '').replace(/"/g, '""')}"`;
-    const kelas = `"${(row.kelas || '').replace(/"/g, '""')}"`;
+    const absen = `"${String(row.absen ?? '').replace(/"/g, '""')}"`;
+    const kelas = `"${String(row.kelas ?? '').replace(/"/g, '""')}"`;
     csvContent += `${no},${waktu},${nama},${absen},${kelas}\r\n`;
   });
 
@@ -142,6 +134,8 @@ export function exportStudentsToCsv() {
  * Send student login record to Google Sheets via Apps Script Web App
  */
 export async function sendLoginToSpreadsheet(data) {
+  // Local previews must not create test attendance records in the live sheet.
+  if (import.meta.env?.DEV) return { success: true, localOnly: true };
   const scriptUrl = getScriptUrl();
   
   // Jika URL masih placeholder bawaan, cukup log info
@@ -152,7 +146,7 @@ export async function sendLoginToSpreadsheet(data) {
 
   if (scriptUrl.includes('sheetdb.io')) {
     try {
-      await fetch(scriptUrl, {
+      const response = await fetch(scriptUrl, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -169,6 +163,7 @@ export async function sendLoginToSpreadsheet(data) {
           }]
         })
       });
+      if (!response.ok) throw new Error(`Presensi belum tersinkron (HTTP ${response.status}).`);
       return { success: true };
     } catch (e) {
       console.warn('[SheetDB Login Sync] Gagal mengirim:', e);
@@ -187,7 +182,7 @@ export async function sendLoginToSpreadsheet(data) {
   };
 
   try {
-    // Mode 'no-cors' dengan text/plain memastikan pengiriman sukses dari GitHub Pages tanpa isu CORS preflight
+    // An opaque no-cors response cannot confirm that the server saved attendance.
     await fetch(scriptUrl, {
       method: 'POST',
       mode: 'no-cors',
@@ -197,7 +192,7 @@ export async function sendLoginToSpreadsheet(data) {
       body: JSON.stringify(payload)
     });
 
-    return { success: true };
+    return { success: false, unconfirmed: true };
   } catch (error) {
     console.warn('[Google Sheets Sync] Gagal mengirim ke Spreadsheet, data tersimpan di browser:', error);
     return { success: false, error };
@@ -225,24 +220,47 @@ export function updateHeaderProfile(student) {
     if (popoverName) popoverName.textContent = student.nama;
     if (popoverMeta) popoverMeta.textContent = `Kelas: ${student.kelas} • No. Absen: ${student.absen}`;
   } else {
-    if (badgeLevel) badgeLevel.textContent = 'Isi identitas';
-    if (userSubLabel) userSubLabel.textContent = 'Opsional untuk menjelajah';
+    if (badgeLevel) { badgeLevel.textContent = 'Masuk'; badgeLevel.removeAttribute('title'); }
+    if (userSubLabel) { userSubLabel.textContent = 'Isi identitas siswa'; userSubLabel.removeAttribute('title'); }
     if (popoverName) popoverName.textContent = 'Belum Login';
     if (popoverMeta) popoverMeta.textContent = 'Klik untuk masuk';
   }
+  const badge = document.getElementById('header-user-badge');
+  badge?.setAttribute('aria-label', student ? `Akun siswa: ${student.nama}` : 'Masuk sebagai siswa');
+  badge?.setAttribute('aria-haspopup', student ? 'true' : 'dialog');
+  const changeLabel = document.querySelector('#btn-change-account span');
+  if (changeLabel) changeLabel.textContent = student ? 'Ganti identitas' : 'Masuk';
+  const exitButton = document.getElementById('btn-logout-account');
+  if (exitButton) exitButton.hidden = !student;
 }
 
 /**
  * Show / Hide Login Modal
  */
+let authReturnFocus;
+let authAppWasInert = false;
 export function showAuthModal() {
   const modal = document.getElementById('auth-modal');
   if (!modal) return;
+  const student = getStudentSession();
+  const fields = { nama: 'auth-name', absen: 'auth-absen', kelas: 'auth-kelas' };
+  for (const [key, id] of Object.entries(fields)) {
+    const input = document.getElementById(id);
+    if (input) { input.value = student?.[key] || ''; input.removeAttribute('aria-invalid'); }
+  }
+  const alertBox = document.getElementById('auth-alert');
+  if (alertBox) alertBox.style.display = 'none';
+  document.getElementById('auth-modal-title').textContent = student ? 'Ganti identitas siswa' : 'Masuk Ruang Belajar';
+  document.querySelector('#auth-submit-btn .btn-text').textContent = student ? 'Simpan identitas' : 'Masuk & mulai belajar';
+  authReturnFocus = document.activeElement;
+  const app = document.querySelector('.app-container');
+  authAppWasInert = app?.inert || false;
+  if (app) app.inert = true;
   modal.style.display = 'flex';
   document.body.classList.add('auth-modal-open');
   
   setTimeout(() => {
-    document.getElementById('auth-name')?.focus();
+    if (modal.style.display === 'flex') document.getElementById('auth-name')?.focus();
   }, 120);
 }
 
@@ -251,6 +269,10 @@ export function hideAuthModal() {
   if (!modal) return;
   modal.style.display = 'none';
   document.body.classList.remove('auth-modal-open');
+  const app = document.querySelector('.app-container');
+  if (app) app.inert = authAppWasInert;
+  const target = authReturnFocus?.isConnected && authReturnFocus.getClientRects().length ? authReturnFocus : document.getElementById('header-user-badge');
+  if (!app?.inert) target?.focus({ preventScroll: true });
 }
 
 /**
@@ -305,7 +327,8 @@ export function showRekapModal() {
   // Isi input URL Apps Script yang tersimpan
   const urlInput = document.getElementById('sheet-url-input');
   if (urlInput) {
-    const currentUrl = localStorage.getItem(SCRIPT_URL_STORAGE_KEY) || '';
+    let currentUrl = '';
+    try { currentUrl = localStorage.getItem(SCRIPT_URL_STORAGE_KEY) || ''; } catch {}
     urlInput.value = currentUrl;
   }
 
@@ -325,10 +348,14 @@ export function hideRekapModal() {
  */
 export function initAuth() {
   const authForm = document.getElementById('auth-form');
+  if (!authForm || authForm.dataset.ready === 'true') return;
+  authForm.dataset.ready = 'true';
   const authSubmitBtn = document.getElementById('auth-submit-btn');
   const userBadge = document.getElementById('header-user-badge');
   const userPopover = document.getElementById('user-popover');
   const btnLogout = document.getElementById('btn-change-account');
+  const btnExit = document.getElementById('btn-logout-account');
+  let submitting = false;
   const btnOpenRekap = document.getElementById('btn-open-rekap');
   const btnCloseRekap = document.getElementById('btn-close-rekap');
   const btnExportCsv = document.getElementById('btn-export-csv');
@@ -341,100 +368,97 @@ export function initAuth() {
 
   updateHeaderProfile(currentSession);
 
-  // 2. Event Submit Form Login
-  if (authForm) {
-    authForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const nameInput = document.getElementById('auth-name');
-      const absenInput = document.getElementById('auth-absen');
-      const kelasInput = document.getElementById('auth-kelas');
-
-      const nama = nameInput?.value.trim();
-      const absen = absenInput?.value.trim();
-      const kelas = kelasInput?.value.trim();
-
-      if (!nama || !absen || !kelas) {
-        showAuthAlert('Harap isi semua kolom identitas dengan benar.', 'error');
-        return;
-      }
-
-      // State loading tombol
-      if (authSubmitBtn) {
-        authSubmitBtn.disabled = true;
-        authSubmitBtn.classList.add('is-loading');
-      }
-
-      const studentData = {
-        nama,
-        absen,
-        kelas,
-        loginAt: new Date().toISOString()
-      };
-
-      // 1. Simpan sesi login aktif
-      saveStudentSession(studentData);
+  authForm.noValidate = true;
+  authForm.querySelectorAll('input').forEach(input => input.addEventListener('input', () => {
+    input.removeAttribute('aria-invalid');
+    document.getElementById('auth-alert').style.display = 'none';
+  }));
+  authForm.addEventListener('submit', event => {
+    event.preventDefault();
+    if (submitting || document.getElementById('auth-modal').style.display !== 'flex') return;
+    const checked = validateStudentIdentity({
+      nama: document.getElementById('auth-name').value,
+      absen: document.getElementById('auth-absen').value,
+      kelas: document.getElementById('auth-kelas').value
+    });
+    if (!checked.valid) {
+      showAuthAlert(checked.message);
+      const input = document.getElementById({ nama: 'auth-name', absen: 'auth-absen', kelas: 'auth-kelas' }[checked.field]);
+      input?.setAttribute('aria-invalid', 'true');
+      input?.focus();
+      return;
+    }
+    submitting = true;
+    authSubmitBtn.disabled = true;
+    const studentData = { ...checked.student, loginAt: new Date().toISOString() };
+    try {
+      const saved = saveStudentSession(studentData);
+      if (!saved.success) { showAuthAlert(saved.message); return; }
       updateHeaderProfile(studentData);
-
-      // Sinkronkan data siswa ke seluruh modul (LKPD, Etiket, dll)
-      try {
-        window.dispatchEvent(new CustomEvent('draftlab:student-login', { detail: studentData }));
-      } catch (evErr) {
-        console.warn('Error dispatching student-login event:', evErr);
-      }
-
-      // 2. Simpan di log histori rekap
+      window.dispatchEvent(new CustomEvent('draftlab:student-login', { detail: studentData }));
       recordStudentLogin(studentData);
+      sendLoginToSpreadsheet(studentData).catch(error => console.warn('Presensi belum tersinkron:', error));
+      hideAuthModal();
+      showLoginToast(saved.persisted ? `Selamat belajar, ${studentData.nama}!` : 'Berhasil masuk untuk kunjungan ini. Browser belum bisa menyimpan sesi setelah refresh.');
+    } finally {
+      submitting = false;
+      authSubmitBtn.disabled = false;
+      authSubmitBtn.classList.remove('is-loading');
+    }
+  });
 
-      // 3. Kirim ke Google Sheets di background (non-blocking)
-      sendLoginToSpreadsheet(studentData).catch((err) => console.warn(err));
-
-      // Berikan visual feedback cepat
-      setTimeout(() => {
-        if (authSubmitBtn) {
-          authSubmitBtn.classList.remove('is-loading');
-          authSubmitBtn.disabled = false;
-        }
-
-        hideAuthModal();
-        showLoginToast(`Selamat belajar, ${nama}!`);
-      }, 500);
-    });
-  }
-
-  // 3. User Badge Popover Toggle
+  const closePopover = () => {
+    if (userPopover) userPopover.style.display = 'none';
+    userBadge?.setAttribute('aria-expanded', 'false');
+  };
   if (userBadge && userPopover) {
-    userBadge.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isVisible = userPopover.style.display === 'block';
-      userPopover.style.display = isVisible ? 'none' : 'block';
+    userBadge.setAttribute('aria-controls', 'user-popover');
+    userBadge.setAttribute('aria-expanded', 'false');
+    userBadge.addEventListener('click', event => {
+      if (userPopover.contains(event.target)) return;
+      event.stopPropagation();
+      if (!getStudentSession()) { closePopover(); showAuthModal(); return; }
+      const open = userPopover.style.display !== 'block';
+      userPopover.style.display = open ? 'block' : 'none';
+      userBadge.setAttribute('aria-expanded', String(open));
     });
-
-    document.addEventListener('click', (e) => {
-      if (!userPopover.contains(e.target) && !userBadge.contains(e.target)) {
-        userPopover.style.display = 'none';
-      }
+    userBadge.addEventListener('keydown', event => {
+      if (event.target !== userBadge) return;
+      if (['Enter', ' '].includes(event.key)) { event.preventDefault(); userBadge.click(); }
     });
-  }
-
-  // 4. Tombol Ganti Akun / Logout
-  if (btnLogout) {
-    btnLogout.addEventListener('click', () => {
-      if (!getStudentSession() || confirm('Ganti identitas siswa di perangkat ini?')) {
-        clearStudentSession();
-        updateHeaderProfile(null);
-        try {
-          window.dispatchEvent(new CustomEvent('draftlab:student-logout'));
-        } catch (evErr) {
-          console.warn('Error dispatching student-logout event:', evErr);
-        }
-        if (userPopover) userPopover.style.display = 'none';
-        
-        authForm?.reset();
-        showAuthModal();
-      }
+    document.addEventListener('click', event => {
+      if (!userPopover.contains(event.target) && !userBadge.contains(event.target)) closePopover();
     });
   }
+  btnLogout?.addEventListener('click', event => { event.stopPropagation(); closePopover(); showAuthModal(); });
+  btnExit?.addEventListener('click', event => {
+    event.stopPropagation();
+    clearStudentSession();
+    closePopover();
+    updateHeaderProfile(null);
+    window.dispatchEvent(new CustomEvent('draftlab:student-logout'));
+    showLoginToast('Sudah keluar dari identitas siswa. Kamu tetap bisa menjelajah.');
+    userBadge?.focus();
+  });
+  const modal = document.getElementById('auth-modal');
+  modal?.addEventListener('click', event => { if (event.target === modal && !submitting) hideAuthModal(); });
+  document.addEventListener('keydown', event => {
+    if (modal?.style.display === 'flex') {
+      if (event.key === 'Escape' && !submitting) { event.preventDefault(); hideAuthModal(); }
+      if (event.key === 'Tab') {
+        const targets = [...modal.querySelectorAll('button:not(:disabled), input:not(:disabled)')].filter(el => el.getClientRects().length);
+        const first = targets[0], last = targets.at(-1);
+        if (event.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    } else if (event.key === 'Escape') closePopover();
+  });
+  window.addEventListener('storage', event => {
+    if (event.key !== AUTH_STORAGE_KEY && event.key !== null) return;
+    const student = getStudentSession();
+    updateHeaderProfile(student);
+    window.dispatchEvent(new CustomEvent(student ? 'draftlab:student-login' : 'draftlab:student-logout', { detail: student }));
+  });
 
   // 5. Tombol Buka Modal Rekap Data Siswa
   if (btnOpenRekap) {
@@ -532,9 +556,7 @@ function showAuthAlert(message, type = 'error') {
   alertBox.textContent = message;
   alertBox.className = `auth-alert auth-alert-${type}`;
   alertBox.style.display = 'block';
-  setTimeout(() => {
-    alertBox.style.display = 'none';
-  }, 4000);
+
 }
 
 function showLoginToast(message) {

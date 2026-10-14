@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 160" fill="none">
+  <defs>
+    <linearGradient id="screen" x1="29" y1="30" x2="147" y2="130" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#bedde9"/></linearGradient>
+    <linearGradient id="frame" x1="45" y1="32" x2="139" y2="124" gradientUnits="userSpaceOnUse"><stop stop-color="#29afc2"/><stop offset="1" stop-color="#057b9d"/></linearGradient>
+    <linearGradient id="play" x1="74" y1="63" x2="109" y2="104" gradientUnits="userSpaceOnUse"><stop stop-color="#ffe9a7"/><stop offset="1" stop-color="#eeb950"/></linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#156784" flood-opacity=".16"/></filter>
+  </defs>
+  <ellipse cx="91" cy="140" rx="61" ry="8" fill="#badce4" opacity=".5"/>
+  <g filter="url(#shadow)" transform="rotate(-7 90 80)">
+    <rect x="26" y="37" width="133" height="95" rx="20" fill="#08758f"/>
+    <rect x="20" y="30" width="133" height="95" rx="20" fill="url(#frame)"/>
+    <rect x="28" y="38" width="117" height="72" rx="13" fill="url(#screen)"/>
+    <path d="M41 116h36m43 0h13" stroke="#aae6e9" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="89" cy="76" r="23" fill="#6fadaf" opacity=".18"/>
+    <circle cx="86" cy="73" r="23" fill="url(#play)" stroke="#f6d178" stroke-width="1.5"/>
+    <path d="m81 62 17 11-17 11Z" fill="#176581" stroke="#176581" stroke-linejoin="round" stroke-width="2"/>
+    <path d="M39 46h57" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+  </g>
+  <path d="m139 17 3 9 9 3-9 3-3 9-3-9-9-3 9-3Z" fill="#eac267"/>
+  <circle cx="21" cy="104" r="4" fill="#6bbbaf"/>
+</svg>

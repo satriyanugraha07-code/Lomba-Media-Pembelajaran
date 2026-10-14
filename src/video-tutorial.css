@@ -1,0 +1,42 @@
+#videos .video-lesson { max-width: 1240px; margin: 0 auto; color: #153451; font-family: 'Plus Jakarta Sans', sans-serif; }
+#videos .video-hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 25px; align-items: center; padding: 32px 36px; border: 1px solid #bde5ed; border-radius: 30px; background: linear-gradient(115deg, #e4f8ff, #d9f2fc 60%, #d2eee8); overflow: hidden; }
+#videos .video-kicker { color: #2b7d91; font-size: 10px; letter-spacing: .12em; font-weight: 800; margin: 0 0 9px; line-height: 1.6; }
+#videos .video-hero h2 { color: #0a2859; font-size: clamp(30px, 3.5vw, 44px); letter-spacing: -.045em; line-height: 1.15; margin: 0; }
+#videos .video-hero h2 span { color: #078bad; }
+#videos .video-swoosh { display: block; width: 215px; max-width: 80%; height: 18px; margin: 4px 0 12px; }
+#videos .video-hero > div > p:last-child { max-width: 440px; margin: 0; font-size: 13px; line-height: 1.85; color: #466d84; }
+#videos .video-hero-art { position: relative; isolation: isolate; display: grid; place-items: center; }
+#videos .video-art-circle { position: absolute; z-index: -1; width: 230px; height: 230px; max-width: 95%; border-radius: 50%; background: #ffffff70; box-shadow: 0 0 0 18px #ffffff25; }
+#videos .video-hero-art img { display: block; width: min(100%, 280px); height: auto; transform: rotate(5deg); }
+#videos .video-art-note { color: #387f92; font: 700 25px/1.2 'Caveat', cursive; transform: rotate(-4deg); }
+#videos .video-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin: 28px 3px 20px; }
+#videos .video-heading h3 { margin: 0; font-size: 22px; letter-spacing: -.035em; line-height: 1.4; }
+#videos .video-coming-pill { padding: 8px 13px; background: #edf8f3; color: #49846d; border: 1px solid #cfe7da; border-radius: 30px; font-size: 10px; font-weight: 700; }
+#videos .video-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr); gap: 22px; }
+#videos .video-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 35px 30px; min-height: 365px; text-align: center; border: 1px solid #d9e8ef; border-radius: 27px; background: #fff; }
+#videos .video-empty-art { padding: 4px 22px; border-radius: 30px; background: linear-gradient(135deg, #f0f9ff, #eff9f3); margin-bottom: 21px; }
+#videos .video-empty-art img { display: block; width: 132px; height: auto; }
+#videos .video-empty h3 { font-size: 21px; letter-spacing: -.035em; line-height: 1.4; margin: 0 0 11px; }
+#videos .video-empty > p { max-width: 380px; color: #608094; font-size: 12px; line-height: 1.9; margin: 0 0 22px; }
+#videos .video-primary { display: inline-flex; align-items: center; gap: 17px; min-height: 44px; padding: 11px 20px; border: 0; border-radius: 30px; color: #fff; background: linear-gradient(135deg, #05a6bf, #058aa9); font: 700 11px/1.6 'Plus Jakarta Sans', sans-serif; cursor: pointer; }
+#videos .video-primary:hover { background: #057f9b; }
+#videos .video-primary:focus-visible { outline: 3px solid #1594b1; outline-offset: 4px; }
+#videos .video-tips { padding: 30px 26px; border-radius: 27px; border: 1px solid #e8dfbf; background: linear-gradient(145deg, #fffaea, #fffdf6); }
+#videos .video-tips > h3 { margin: 0; color: #3e5c6b; font-size: 23px; line-height: 1.35; letter-spacing: -.035em; }
+#videos .video-tips .video-kicker { color: #92793b; }
+#videos .video-tips ol { display: grid; gap: 20px; padding: 0; list-style: none; margin: 23px 0 0; }
+#videos .video-tips li { display: flex; align-items: start; gap: 13px; }
+#videos .video-tips li > span { display: grid; place-items: center; flex: 0 0 32px; height: 32px; border-radius: 11px; background: #f2e8c8; color: #a0813a; font-size: 10px; font-weight: 800; }
+#videos .video-tips strong { font-size: 12px; color: #4f6470; }
+#videos .video-tips li p { font-size: 11px; color: #71838b; line-height: 1.8; margin: 6px 0 0; }
+#videos .video-handwritten { color: #8a8b67; font: 700 24px/1.4 'Caveat', cursive; margin: 24px 0 0; }
+@media (max-width: 760px) {
+  #videos .video-hero { grid-template-columns: 1fr; padding: 25px 24px 20px; gap: 10px; border-radius: 25px; }
+  #videos .video-hero-art img { width: 190px; }
+  #videos .video-art-circle { width: 160px; height: 160px; }
+  #videos .video-art-note { font-size: 22px; }
+  #videos .video-heading h3 { font-size: 20px; }
+  #videos .video-layout { grid-template-columns: 1fr; gap: 17px; }
+  #videos .video-empty { padding: 28px 20px; min-height: 330px; }
+  #videos .video-tips { padding: 25px 23px; }
+}
