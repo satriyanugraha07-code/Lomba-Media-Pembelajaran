@@ -179,7 +179,7 @@ export async function createPencilScene(canvas, container, onContextLost = () =>
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.font = '750 96px sans-serif';
-    context.fillText(`${config.grade.toUpperCase()}  ·  SDRAFT`, 512, 64, 970);
+    context.fillText(`${config.grade.toUpperCase()}  ·  ARCUS`, 512, 64, 970);
     const print = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.75, .14)), keep(new THREE.MeshBasicMaterial({ map: texture(image), transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2 })));
     print.position.set(0, 2.13, .159);
     print.rotation.z = Math.PI / 2;

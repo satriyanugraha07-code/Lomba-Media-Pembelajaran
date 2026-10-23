@@ -33,9 +33,6 @@ aside.sidebar { border-right: 1px solid #ececf3; padding: 1.5rem 0.85rem; }
 header.top-header { border-bottom: 0; background: var(--bg-primary); }
 .page-title h2 { color: #777b91; font-size: 0.9rem; font-weight: 600; }
 .sidebar-toggle-btn { border: 0; background: #fff; border-radius: 50%; color: #8386a1; box-shadow: none; }
-.header-user-badge { background: #fff; border: 0; border-radius: 50px; }
-.user-avatar-circle { background: #eeeffc; color: #6970d8; }
-.user-badge-info .user-sub-label { display: none; }
 
 #dashboard { padding: 0.55rem clamp(1rem, 3vw, 2.7rem) 3rem !important; }
 .dashboard-hub.studio-home { max-width: 1240px; gap: 1.6rem; }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" data-motion="on" data-initial-entry="true">
+<html lang="id" data-motion="on" data-initial-entry="true" data-auth="pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDRAFT — Ruang Belajar Gambar Teknik</title>
+  <title>ARCUS — Ruang Belajar Gambar Teknik</title>
   <meta name="description" content="Media pembelajaran gambar teknik manual interaktif untuk mengenal alat, pensil, garis ISO, etiket, proyeksi, dan menguji pemahaman.">
   <meta name="theme-color" content="#f6f9ff">
   <meta name="color-scheme" content="light">
@@ -31,18 +31,19 @@
     }
   </style>
   <meta property="og:type" content="website">
-  <meta property="og:title" content="SDRAFT — Ruang Belajar Gambar Teknik">
+  <meta property="og:title" content="ARCUS — Ruang Belajar Gambar Teknik">
   <meta property="og:description" content="Belajar, praktik, dan uji kompetensi gambar teknik dalam satu ruang interaktif.">
-  <meta id="og-image" property="og:image" content="/brand/sdraft-wordmark.png">
-  <meta property="og:image:width" content="2172">
-  <meta property="og:image:height" content="724">
-  <meta property="og:image:alt" content="SDRAFT, Technical Drawing Learning Platform">
+  <meta id="og-image" property="og:image" content="/brand/arcus-og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="ARCUS — Precision Starts Here.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SDRAFT — Ruang Belajar Gambar Teknik">
+  <meta name="twitter:title" content="ARCUS — Ruang Belajar Gambar Teknik">
   <meta name="twitter:description" content="Belajar, praktik, dan uji kompetensi gambar teknik dalam satu ruang interaktif.">
-  <meta id="twitter-image" name="twitter:image" content="/brand/sdraft-wordmark.png">
-  <link rel="icon" href="/brand/sdraft-mark.png" type="image/png">
-  <link rel="apple-touch-icon" href="/brand/sdraft-mark.png">
+  <meta id="twitter-image" name="twitter:image" content="/brand/arcus-og.png">
+  <link rel="icon" href="/brand/arcus-mark.png" type="image/png" sizes="512x512">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/brand/arcus-touch.png">
   <link rel="preload" href="/images/studio-banner.webp" as="image" fetchpriority="high">
   <link rel="stylesheet" href="/src/app.css">
   <link rel="stylesheet" href="/src/intro-refresh.css">
@@ -60,7 +61,7 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <div class="logo-container brand-logo-container">
-        <img src="/brand/sdraft-wordmark.png" alt="SDRAFT — Technical Drawing Learning Platform" class="brand-wordmark" width="2172" height="724">
+        <img src="/brand/arcus-logo.png" alt="ARCUS — Precision Starts Here." class="brand-wordmark" width="1359" height="445">
       </div>
 
       <p class="nav-eyebrow">Menu utama</p>
@@ -68,10 +69,6 @@
         <div class="nav-item active" data-target="dashboard">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m2.5 10.2 9-7.4a.8.8 0 0 1 1 0l9 7.4v10a1 1 0 0 1-1 1h-5.2v-7h-6.6v7H3.5a1 1 0 0 1-1-1z" fill="currentColor" stroke="none"/></svg>
           <span>Beranda</span>
-        </div>
-        <div class="nav-item" data-target="book">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5.3C9.7 3.8 6.7 3.5 3 4.1v15.2c3.7-.6 6.7-.3 9 1.2 2.3-1.5 5.3-1.8 9-1.2V4.1c-3.7-.6-6.7-.3-9 1.2Z"/><path d="M12 5.3v15.2"/></svg>
-          <span>Baca Buku</span>
         </div>
         <div class="nav-item" data-target="videos">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 8 6 4-6 4Z"/></svg>
@@ -120,6 +117,14 @@
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="18" rx="2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m8 11 1.5 1.5L12 10m2 1h3m-9 6 1.5 1.5L12 16m2 1h3"/></svg>
           <span>Tes Pemahaman</span>
           <span class="nav-badge-posttest" style="margin-left: auto; background: #2567b9; color: #ffffff; font-size: 0.62rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 6px;">POST-TEST</span>
+        </div>
+        <div class="nav-item" data-target="uts">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="18" rx="2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M8 11h8M8 15h8M8 19h4"/></svg>
+          <span>Tes Tengah Semester</span>
+        </div>
+        <div class="nav-item" data-target="uas">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"/><path d="m8 12 3 3 5-6"/></svg>
+          <span>Tes Akhir Semester</span>
         </div>
       </nav>
 
@@ -170,62 +175,6 @@
         <div class="page-title">
           <h2 id="current-page-title">Beranda Belajar</h2>
         </div>
-        <div class="header-actions">
-          <!-- User Profile Pill -->
-          <div class="header-user-badge" id="header-user-badge" role="button" tabindex="0" title="Klik untuk informasi akun / ganti siswa">
-            <div class="user-avatar-circle">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-            </div>
-            <div class="user-badge-info">
-              <span id="badge-level" class="user-level-title">Draftsman Apprentice</span>
-              <span class="user-sub-label">Peserta PPG</span>
-            </div>
-            <span class="user-online-status" title="Status: Online"></span>
-
-            <!-- Account Menu / Popover (when clicking header user badge) -->
-            <div id="user-popover" class="user-popover" style="display: none;">
-              <div class="user-popover-card">
-                <div class="user-popover-header">
-                  <div class="popover-avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                  </div>
-                  <div class="popover-info">
-                    <strong id="popover-student-name">Siswa SDRAFT</strong>
-                    <span id="popover-student-meta">Kelas - • No. Absen -</span>
-                  </div>
-                </div>
-                <div class="user-popover-body">
-                  <div class="popover-status-row">
-                    <span class="popover-status-dot"></span>
-                    <span>Data belajar tersimpan di perangkat ini</span>
-                  </div>
-                </div>
-                <div class="user-popover-footer">
-                  <button type="button" id="btn-open-rekap" class="btn-rekap">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <span>Rekap di Perangkat Ini</span>
-                  </button>
-                  <button type="button" id="btn-change-account" class="btn-logout">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                      <polyline points="16 17 21 12 16 7"/>
-                      <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    <span>Isi / Ganti Identitas</span>
-                  </button>
-                  <button type="button" id="btn-logout-account" class="btn-logout" hidden><span>Keluar</span></button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </header>
 
       <!-- ================= SECTION TES DIAGNOSTIK AWAL ================= -->
@@ -245,7 +194,7 @@
               <span>•</span>
               <span class="diag-hero-meta-item"><strong>Fase/Kelas:</strong> X / Fase E (Teknik Pemesinan)</span>
               <span>•</span>
-              <span class="diag-hero-meta-item"><strong>Tahap:</strong> Baseline / Pra SDRAFT</span>
+              <span class="diag-hero-meta-item"><strong>Tahap:</strong> Baseline / Pra ARCUS</span>
             </div>
 
             <div class="diag-notice-box">
@@ -658,7 +607,7 @@
                 <span>🖨️ Cetak / Simpan PDF Lembar Jawaban</span>
               </button>
               <button type="button" id="diag-btn-enter-app" class="diag-btn-next" style="display: none;">
-                <span>Masuk ke Ruang Belajar SDRAFT →</span>
+                <span>Masuk ke Ruang Belajar ARCUS →</span>
               </button>
             </div>
           </div>
@@ -697,10 +646,6 @@
             <button type="button" class="module-card studio-card" data-module="intro">
               <span class="studio-card-art studio-art-lilac"><img src="/ICON/pengenalan.png" alt="" width="160" height="140" loading="lazy"></span>
               <span class="studio-card-bottom"><span class="gamtek-card-title">Kenali gambar teknik</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
-            </button>
-            <button type="button" class="module-card studio-card" data-module="book">
-              <span class="studio-card-art studio-art-peach"><img src="/ICON/buku.png" alt="" width="160" height="140" loading="lazy"></span>
-              <span class="studio-card-bottom"><span class="gamtek-card-title">Baca buku</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
             </button>
             <button type="button" class="module-card studio-card" data-module="videos">
               <span class="studio-card-art studio-art-mint"><img src="/ICON/video-tutorial.svg" alt="" width="160" height="140" loading="lazy"></span>
@@ -743,11 +688,18 @@
               <span class="studio-card-art studio-art-blue"><img src="/ICON/ujian.png" alt="" width="160" height="140" loading="lazy"></span>
               <span class="studio-card-bottom"><span class="gamtek-card-title">Uji pemahaman</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
             </button>
+            <button type="button" class="module-card studio-card" data-module="uts">
+              <span class="studio-card-art studio-art-mint"><img src="/ICON/ujian.png" alt="" width="160" height="140" loading="lazy"></span>
+              <span class="studio-card-bottom"><span class="gamtek-card-title">Tes Tengah Semester</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
+            </button>
+            <button type="button" class="module-card studio-card" data-module="uas">
+              <span class="studio-card-art studio-art-lilac"><img src="/ICON/ujian.png" alt="" width="160" height="140" loading="lazy"></span>
+              <span class="studio-card-bottom"><span class="gamtek-card-title">Tes Akhir Semester</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
+            </button>
           </div>
         </div>
       </section>
 
-      <!-- ================= BUKU AJAR / FLIPBOOK SECTION ================= -->
       <section id="settings" class="app-section utility-section" aria-labelledby="settings-title">
         <div class="utility-intro">
           <span class="utility-eyebrow">Personalisasi</span>
@@ -773,6 +725,12 @@
               <input type="checkbox" id="setting-high-contrast">
               <span class="setting-switch" aria-hidden="true"></span>
             </label>
+          </div>
+          <div class="utility-card">
+            <div class="utility-card-icon" aria-hidden="true">▤</div>
+            <h3>Hasil belajar di perangkat ini</h3>
+            <p>Lihat dan unduh rekap evaluasi yang sudah dikerjakan.</p>
+            <button type="button" class="utility-link" id="btn-open-learning-results">Buka rekap hasil belajar <span aria-hidden="true">→</span></button>
           </div>
         </div>
         <p class="utility-footnote">Pengaturan tersimpan otomatis di browser ini.</p>
@@ -806,7 +764,6 @@
         </div>
       </section>
 
-      <section id="book" class="app-section" aria-label="Baca buku gambar teknik"></section>
       <section id="videos" class="app-section" aria-label="Video tutorial gambar teknik"></section>
 
       <!-- ================= PENGENALAN GAMBAR TEKNIK SECTION ================= -->
@@ -1118,7 +1075,7 @@
               <div class="lettering-controls-row">
                 <div class="control-field">
                   <label for="iso-letter-input">Teks Uji Coba:</label>
-                  <input type="text" id="iso-letter-input" value="SDRAFT 2026 ISO-3098" maxlength="32" class="iso-text-field">
+                  <input type="text" id="iso-letter-input" value="ARCUS 2026 ISO-3098" maxlength="32" class="iso-text-field">
                 </div>
                 <div class="control-field">
                   <label>Tinggi Huruf (h):</label>
@@ -1143,7 +1100,7 @@
                 <div class="letter-guideline-top"></div>
                 <div class="letter-guideline-mid"></div>
                 <div class="letter-guideline-base"></div>
-                <div class="letter-display-text" id="iso-letter-display">SDRAFT 2026 ISO-3098</div>
+                <div class="letter-display-text" id="iso-letter-display">ARCUS 2026 ISO-3098</div>
               </div>
               <p class="line-small-note">Pratinjau membantu membandingkan ukuran dan kemiringan huruf. Ukuran pada layar merupakan ilustrasi; gunakan tinggi h dalam mm saat menggambar di kertas.</p>
 
@@ -1207,6 +1164,8 @@
       <section id="lkpd" class="app-section" aria-label="Lembar kerja gambar teknik"></section>
 
       <!-- ================= TES PEMAHAMAN ================= -->
+      <section id="uts" class="app-section semester-exam-section" aria-label="Tes Tengah Semester"></section>
+      <section id="uas" class="app-section semester-exam-section" aria-label="Tes Akhir Semester"></section>
       <section id="quiz" class="app-section">
         <div class="posttest-container">
 
@@ -1240,7 +1199,7 @@
               </div>
             </div>
 
-            <!-- Student Session Card -->
+            <!-- Assessment participant details -->
             <div class="posttest-student-card">
               <div class="posttest-student-info">
                 <div class="posttest-student-avatar" id="posttest-student-avatar">P</div>
@@ -2116,7 +2075,7 @@
   <div id="certificate-modal" class="modal-overlay" style="display: none;">
     <div class="certificate-modal-card glass-panel">
       <div class="certificate-modal-header">
-        <h4>🎓 Sertifikat Kompetensi Digital SDRAFT</h4>
+        <h4>🎓 Sertifikat Kompetensi Digital ARCUS</h4>
         <button class="modal-close-btn" id="btn-close-certificate" aria-label="Tutup sertifikat">✕</button>
       </div>
 
@@ -2130,9 +2089,9 @@
         <div class="certificate-inner-border">
           <div class="certificate-header">
             <div class="cert-logo-row">
-              <img src="/brand/sdraft-mark.png" alt="Logo SDRAFT" class="cert-logo" width="48" height="48">
+              <img src="/brand/arcus-mark.png" alt="Logo ARCUS" class="cert-logo" width="48" height="48">
               <div class="cert-org-text">
-                <h5>SDRAFT LEARNING STUDIO</h5>
+                <h5>ARCUS LEARNING STUDIO</h5>
                 <span>Media Pembelajaran Interaktif Gambar Teknik Mesin Manual • Standar ISO</span>
               </div>
             </div>
@@ -2165,12 +2124,12 @@
             <div class="cert-date-col">
               <span>Diterbitkan:</span>
               <strong id="cert-display-date">8 September 2026</strong>
-              <span>Ruang Belajar Digital SDRAFT</span>
+              <span>Ruang Belajar Digital ARCUS</span>
             </div>
             <div class="cert-stamp-col">
               <div class="cert-stamp">
                 <span>VERIFIED</span>
-                <small>SDRAFT PPG</small>
+                <small>ARCUS PPG</small>
               </div>
             </div>
             <div class="cert-sign-col">
@@ -2198,187 +2157,19 @@
     </div>
   </div>
 
-  <!-- ================= MODAL LOGIN IDENTITAS SISWA ================= -->
-  <div id="auth-modal" class="auth-modal-backdrop" style="display: none;">
-    <div class="auth-card" role="dialog" aria-labelledby="auth-modal-title" aria-modal="true">
-      <button type="button" id="auth-close-btn" class="auth-close-btn" aria-label="Tutup formulir identitas">✕</button>
-      <!-- Blueprint Watermark Decor -->
-      <div class="auth-card-decor" aria-hidden="true">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="45" stroke="rgba(37,99,235,0.12)" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <circle cx="50" cy="50" r="28" stroke="rgba(37,99,235,0.16)" stroke-width="1"/>
-          <line x1="50" y1="2" x2="50" y2="98" stroke="rgba(37,99,235,0.12)"/>
-          <line x1="2" y1="50" x2="98" y2="50" stroke="rgba(37,99,235,0.12)"/>
-        </svg>
-      </div>
-
-      <div class="auth-header">
-        <div class="auth-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <div class="auth-title-group">
-          <span class="auth-eyebrow">SDRAFT • PRESENSI &amp; IDENTITAS</span>
-          <h2 id="auth-modal-title" class="auth-title">Masuk Ruang Belajar</h2>
-          <p class="auth-subtitle">Isi identitas untuk mencatat hasil atas namamu. Kamu juga bisa menjelajah tanpa mengisi.</p>
-        </div>
-      </div>
-
-      <form id="auth-form" class="auth-form" autocomplete="on">
-        <!-- 1. Nama Lengkap -->
-        <div class="auth-field">
-          <label for="auth-name" class="auth-label">
-            <span>Nama Lengkap</span>
-            <span class="auth-required">*</span>
-          </label>
-          <div class="auth-input-wrap">
-            <svg class="auth-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <input
-              type="text"
-              id="auth-name"
-              name="nama"
-              class="auth-input"
-              placeholder="Masukkan nama lengkap siswa..."
-              required
-              autocomplete="name"
-              minlength="3"
-              maxlength="100"
-            >
-          </div>
-        </div>
-
-        <div class="auth-row-dual">
-          <!-- 2. No. Absen -->
-          <div class="auth-field">
-            <label for="auth-absen" class="auth-label">
-              <span>No. Absen</span>
-              <span class="auth-required">*</span>
-            </label>
-            <div class="auth-input-wrap">
-              <svg class="auth-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="4" y1="9" x2="20" y2="9"/>
-                <line x1="4" y1="15" x2="20" y2="15"/>
-                <line x1="10" y1="3" x2="8" y2="21"/>
-                <line x1="16" y1="3" x2="14" y2="21"/>
-              </svg>
-              <input
-                type="number"
-                id="auth-absen"
-                name="absen"
-                class="auth-input"
-                placeholder="Contoh: 14"
-                min="1"
-                max="99"
-                step="1"
-                inputmode="numeric"
-                required
-              >
-            </div>
-          </div>
-
-          <!-- 3. Kelas -->
-          <div class="auth-field">
-            <label for="auth-kelas" class="auth-label">
-              <span>Kelas</span>
-              <span class="auth-required">*</span>
-            </label>
-            <div class="auth-input-wrap">
-              <svg class="auth-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-              </svg>
-              <input
-                type="text"
-                id="auth-kelas"
-                name="kelas"
-                class="auth-input"
-                placeholder="Contoh: X TP 1 / X Mesin"
-                maxlength="60"
-                required
-              >
-            </div>
-          </div>
-        </div>
-
-        <div id="auth-alert" class="auth-alert" role="alert" style="display: none;"></div>
-
-        <button type="submit" id="auth-submit-btn" class="auth-submit-btn">
-          <span class="btn-text">Mulai Belajar Gambar Teknik</span>
-          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/>
-            <polyline points="12 5 19 12 12 19"/>
-          </svg>
-          <div class="btn-spinner" style="display: none;"></div>
-        </button>
-
-        <div class="auth-footer-note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-          <span>Identitas digunakan saat menyimpan hasil latihan dan evaluasi.</span>
-        </div>
-      </form>
-    </div>
-  </div>
-  <!-- ================= MODAL REKAP DATA SISWA (GURU/ADMIN) ================= -->
-  <div id="rekap-modal" class="rekap-modal-backdrop" style="display: none;">
-    <div class="rekap-card" role="dialog" aria-labelledby="rekap-modal-title" aria-modal="true">
+  <!-- Local learning results -->
+  <dialog id="learning-results-dialog" class="learning-results-dialog" aria-labelledby="learning-results-title">
+    <div class="rekap-card">
       <div class="rekap-header">
-        <div class="rekap-title-left">
-          <div class="rekap-icon-badge">📊</div>
-          <div>
-            <div class="rekap-title-row">
-              <h2 id="rekap-modal-title" class="rekap-title">Rekap Presensi &amp; Data Siswa</h2>
-              <span class="rekap-dev-badge">Data di perangkat ini</span>
-            </div>
-            <p class="rekap-desc">Daftar siswa yang telah masuk ke aplikasi SDRAFT.</p>
-          </div>
-        </div>
-        <div class="rekap-header-actions">
-          <span id="rekap-total-count" class="rekap-count-pill">0 Siswa Tercatat</span>
-          <button type="button" id="btn-export-csv" class="rekap-btn-csv">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            <span>Unduh File Excel (.CSV)</span>
-          </button>
-          <button type="button" id="btn-close-rekap" class="rekap-btn-close" aria-label="Tutup Rekap">✕</button>
-        </div>
+        <div class="rekap-title-left"><div><h2 id="learning-results-title" class="rekap-title">Rekap hasil belajar</h2><p class="rekap-desc">Hasil evaluasi yang tersimpan di perangkat ini.</p></div></div>
+        <button type="button" class="rekap-btn-close" data-close-results aria-label="Tutup rekap hasil belajar">✕</button>
       </div>
-
-      <!-- Tab Switcher Rekap Guru -->
-      <div style="display: flex; gap: 0.5rem; padding: 1rem 1.5rem 0 1.5rem; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap;">
-        <button type="button" id="tab-btn-rekap-login" class="rekap-tab-btn active" style="padding: 0.5rem 1rem; border: none; border-bottom: 2px solid #2567b9; background: none; font-weight: 700; color: #2567b9; cursor: pointer;">📋 Presensi Login Siswa</button>
-        <button type="button" id="tab-btn-rekap-diag" class="rekap-tab-btn" style="padding: 0.5rem 1rem; border: none; border-bottom: 2px solid transparent; background: none; font-weight: 700; color: #64748b; cursor: pointer;">📝 Hasil Tes Diagnostik Siswa</button>
-        <button type="button" id="tab-btn-rekap-posttest" class="rekap-tab-btn" style="padding: 0.5rem 1rem; border: none; border-bottom: 2px solid transparent; background: none; font-weight: 700; color: #64748b; cursor: pointer;">🎯 Hasil Post-Test Pemahaman</button>
+      <div class="learning-results-tabs" role="group" aria-label="Pilih hasil evaluasi">
+        <button type="button" data-results-tab="diag" aria-pressed="true" aria-controls="rekap-diag-view">Tes Diagnostik</button>
+        <button type="button" data-results-tab="posttest" aria-pressed="false" aria-controls="rekap-posttest-view">Tes Pemahaman</button>
+        <button type="button" data-results-tab="semester" aria-pressed="false" aria-controls="semester-results-view">Ujian Semester</button>
       </div>
-
-      <div class="rekap-table-container" id="rekap-login-view">
-        <table class="rekap-table">
-          <thead>
-            <tr>
-              <th style="width: 50px;">No</th>
-              <th>Nama Lengkap</th>
-              <th style="width: 100px;">No. Absen</th>
-              <th>Kelas / Jurusan</th>
-              <th>Waktu Login</th>
-            </tr>
-          </thead>
-          <tbody id="rekap-table-body">
-            <!-- Rendered by JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Container Tabel Hasil Tes Diagnostik Siswa -->
-      <div class="rekap-table-container" id="rekap-diag-view" style="display: none;">
+      <div class="rekap-table-container" id="rekap-diag-view" data-results-panel="diag">
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 0.5rem;">
           <span id="rekap-diag-total-count" class="rekap-count-pill">0 Jawaban Masuk</span>
           <button type="button" id="btn-export-diag-csv" class="rekap-btn-csv" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
@@ -2403,8 +2194,7 @@
         </table>
       </div>
 
-      <!-- Container Tabel Hasil Post-Test Siswa -->
-      <div class="rekap-table-container" id="rekap-posttest-view" style="display: none;">
+      <div class="rekap-table-container" id="rekap-posttest-view" data-results-panel="posttest" hidden>
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 0.5rem;">
           <span id="rekap-posttest-total-count" class="rekap-count-pill">0 Jawaban Post-Test</span>
           <button type="button" id="btn-export-posttest-csv" class="rekap-btn-csv" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
@@ -2428,30 +2218,13 @@
           </tbody>
         </table>
       </div>
-
-      <div class="rekap-footer">
-        <div class="rekap-sheet-sync-box">
-          <div class="sync-box-info">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-            </svg>
-            <div>
-              <strong>Integrasi Google Spreadsheet Online (Opsional)</strong>
-              <p>Tempel URL Web App Google Apps Script kamu di sini agar data online otomatis tersinkron ke Google Drive kamu.</p>
-            </div>
-          </div>
-          <div class="sync-input-row">
-            <input type="url" id="sheet-url-input" class="sync-input" placeholder="https://script.google.com/macros/s/.../exec">
-            <button type="button" id="btn-save-sheet-url" class="sync-btn-save">Simpan Link</button>
-          </div>
-        </div>
-        <div class="rekap-footer-actions">
-          <button type="button" id="btn-clear-history" class="rekap-btn-clear">🗑️ Hapus Riwayat Browser</button>
-        </div>
+      <div class="rekap-table-container" id="semester-results-view" data-results-panel="semester" hidden>
+        <div class="semester-results-toolbar"><span id="semester-results-count">0 percobaan tersimpan</span><button type="button" id="semester-results-export" class="rekap-btn-csv">Unduh rekap & jawaban (.CSV)</button></div>
+        <table class="rekap-table"><thead><tr><th>Ujian</th><th>Peserta</th><th>Kelas / absen</th><th>PG</th><th>Uraian</th><th>Catatan</th><th>Selesai (WIB)</th><th>Bukti</th></tr></thead><tbody id="semester-results-body"></tbody></table>
+        <p class="semester-results-note">Nilai akhir menunggu penilaian uraian. Catatan keluar halaman perlu ditinjau guru. Data pada tabel ini berasal dari browser perangkat ini.</p>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <script type="module" src="/src/main.js"></script>
 </body>

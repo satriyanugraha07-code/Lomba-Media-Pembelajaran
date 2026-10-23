@@ -4,11 +4,11 @@ import '../js/pencils.js';
 import '../js/etiket.js';
 import '../js/lines.js';
 import '../js/projection.js';
-import '../js/book-reader.js';
 import '../js/model-3d.js';
 import '../js/intro.js';
 import { initLkpd } from '../js/lkpd.js';
-import { initAuth } from '../js/auth.js';
+import { initLearningResults } from '../js/learning-results.js';
+import { cleanupObsoleteStorage } from './obsolete-storage.js';
 import { initDiagnostik } from '../js/diagnostik.js';
 import { initPostTest } from '../js/post-test.js';
 import { publicAssetUrl } from './asset-url.js';
@@ -22,10 +22,26 @@ import { initWelcomeBumper } from './welcome-bumper.js';
 import './welcome-bumper.css';
 import { initVideoTutorial } from './video-tutorial.js';
 import './video-tutorial.css';
-import './auth-refresh.css';
+import './learning-results.css';
+import { initSemesterExams } from './semester-exams.js';
+import './semester-exams.css';
+import { initAuthentication } from './login.js';
+import { initAssessmentSync, initTestVisitTracking } from './assessment-sync.js';
+import { initTeacherDashboard } from './teacher-dashboard.js';
+import { isTeacher } from './auth-session.js';
+import './login.css';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  cleanupObsoleteStorage();
   initWelcomeBumper();
+  await initAuthentication();
+  try { await initAssessmentSync(); } catch (error) {
+    const gate = document.getElementById('identity-gate'); gate.hidden = false;
+    gate.querySelector('[data-login-error]').textContent = `${error.message} Hubungi guru sebelum memulai tes.`;
+    document.documentElement.dataset.auth = 'pending';
+    document.querySelector('.app-container').inert = true;
+    return;
+  }
   initDisplaySettings();
   initModuleLocks();
   const scenePreview = document.getElementById('learning-scene');
@@ -41,12 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (!isModuleLocked('lkpd')) initLkpd();
   initVideoTutorial();
-  initAuth();
   if (!isModuleLocked('diagnostik')) initDiagnostik();
   if (!isModuleLocked('quiz')) initPostTest();
+  initLearningResults();
   const pageTitle = document.getElementById('current-page-title');
   const navigationItems = document.querySelectorAll('.nav-item');
-  const absoluteSocialImage = new URL(publicAssetUrl('brand/sdraft-wordmark.png'), window.location.origin).href;
+  const absoluteSocialImage = new URL(publicAssetUrl('brand/arcus-og.png'), window.location.origin).href;
 
   document.getElementById('og-image')?.setAttribute('content', absoluteSocialImage);
   document.getElementById('twitter-image')?.setAttribute('content', absoluteSocialImage);
@@ -74,9 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const categories = {
-    book: 'materi', videos: 'materi', intro: 'materi', lines: 'materi',
+    videos: 'materi', intro: 'materi', lines: 'materi',
     tools: 'praktik', pencils: 'praktik', etiket: 'praktik', projection: 'praktik', model3d: 'praktik', lkpd: 'praktik',
-    quiz: 'evaluasi'
+    quiz: 'evaluasi', uts: 'evaluasi', uas: 'evaluasi'
   };
   const cards = document.querySelectorAll('.hub-grid .module-card');
   document.querySelectorAll('.module-filter').forEach((filter) => {
@@ -109,4 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initPageInteractions();
   initPageMotion();
+  initSemesterExams();
+  document.querySelectorAll('#diagnostik textarea, #quiz textarea').forEach(input => { input.maxLength = 10000; });
+  document.querySelectorAll('.diag-q7-input').forEach(input => { input.maxLength = 2000; });
+  initTeacherDashboard();
+  initTestVisitTracking();
+  if (isTeacher()) {
+    document.querySelectorAll('#diagnostik input, #diagnostik textarea, #quiz textarea, #quiz .posttest-mcq-opt, #diagnostik .diag-mcq-opt, #diagnostik .diag-toggle-btn, #diag-btn-submit, #btn-submit-posttest').forEach(control => { control.disabled = true; control.style.pointerEvents = 'none'; });
+  }
+  document.querySelector('.app-container').inert = false;
+  document.documentElement.dataset.auth = 'ready';
 });

@@ -36,15 +36,10 @@ aside.sidebar {
 
 header.top-header { background: #fff; border-bottom: 1px solid #e3eaf2; box-shadow: none; }
 .page-title h2 { font-size: clamp(0.96rem, 1.4vw, 1.17rem); }
-.header-user-badge { border-radius: 12px; box-shadow: none; }
-.user-online-status { display: none; }
 .app-section { padding: clamp(1rem, 2.6vw, 2rem); }
 .app-section.active, .app-section.active > * { animation: none; }
 .glass-panel { background: #fff !important; border-color: #e1e9f3 !important; box-shadow: 0 4px 18px rgba(27, 62, 105, 0.045) !important; backdrop-filter: none; }
 .glass-panel:hover { transform: none; }
-.auth-card { position: relative; }
-.auth-close-btn { position: absolute; z-index: 10; top: 0.8rem; right: 0.8rem; width: 36px; height: 36px; border: 1px solid #dce7f4; border-radius: 10px; background: #fff; color: #59708a; cursor: pointer; }
-.auth-close-btn:hover { background: #f0f6fd; }
 
 #dashboard { padding: clamp(1rem, 2.5vw, 2rem) !important; }
 .dashboard-hub { max-width: 1160px; gap: 1.65rem; }
@@ -201,10 +196,6 @@ header.top-header { background: #fff; border-bottom: 1px solid #e3eaf2; box-shad
   .page-title { flex: 1 1 auto; justify-content: flex-start; text-align: left; min-width: 0; }
   .page-title h2 { max-width: 100%; font-size: 0.92rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .header-actions { display: flex !important; flex: 0 0 auto; }
-  .header-user-badge { padding: 0.26rem; border: 0; background: #eef5ff; }
-  .header-user-badge:hover, .header-user-badge:focus-within { transform: none; }
-  .header-user-badge .user-badge-info { display: none; }
-  .user-popover { position: fixed !important; top: 64px !important; left: 0.8rem !important; right: 0.8rem !important; width: auto !important; max-width: none !important; z-index: 1001; }
   .app-section, #dashboard, #intro { padding: 0.85rem !important; }
   .dashboard-hub { gap: 1.15rem; }
   .gamtek-hero-banner { flex-direction: column; border-radius: 17px; min-height: auto; }
@@ -224,7 +215,7 @@ header.top-header { background: #fff; border-bottom: 1px solid #e3eaf2; box-shad
   .gamtek-card-content { margin-top: 1.65rem; }
   .gamtek-card-desc { display: none; }
   .glass-panel, .posttest-card { border-radius: 14px !important; }
-  .auth-card, .rekap-card, .certificate-modal-card { max-width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); overflow-y: auto; }
+  .rekap-card, .certificate-modal-card { max-width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); overflow-y: auto; }
   input, select, textarea { max-width: 100%; font-size: 16px; }
   .rekap-table-container { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .rekap-table { min-width: 620px; }

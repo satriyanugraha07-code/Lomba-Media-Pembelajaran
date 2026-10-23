@@ -5,6 +5,8 @@
   "type": "module",
   "description": "Media pembelajaran gambar teknik manual interaktif berbasis Vite.",
   "scripts": {
+    "backend:build": "node scripts/build-apps-script.mjs",
+    "test": "node --test tests/*.test.mjs tests/*.test.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

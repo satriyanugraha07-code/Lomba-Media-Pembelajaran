@@ -245,8 +245,8 @@ export function initPencilLab() {
     exportContext.fillStyle = '#fff'; exportContext.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
     exportContext.drawImage(practiceCanvas, 0, 0);
     exportContext.fillStyle = '#476580'; exportContext.font = `${12 * pixelRatio}px sans-serif`;
-    exportContext.fillText('SDRAFT · Latihan goresan pensil', 20 * pixelRatio, exportCanvas.height - 19 * pixelRatio);
-    const link = document.createElement('a'); link.download = `sdraft-latihan-pensil-${Date.now()}.png`; link.href = exportCanvas.toDataURL('image/png'); link.click();
+    exportContext.fillText('ARCUS · Latihan goresan pensil', 20 * pixelRatio, exportCanvas.height - 19 * pixelRatio);
+    const link = document.createElement('a'); link.download = `arcus-latihan-pensil-${Date.now()}.png`; link.href = exportCanvas.toDataURL('image/png'); link.click();
   }, options);
 
   const syncVisibility = () => {

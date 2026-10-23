@@ -74,10 +74,9 @@ test('first entry welcomes once and a fresh reload skips as soon as entry is rem
   assert.equal(hasSeenWelcome(reload.browser, reload.document), true);
 });
 
-test('remembering welcome preserves existing student, worksheet, and progress data', () => {
+test('remembering welcome preserves worksheet, results, and progress data', () => {
   const entries = [
-    ['draftlab_student_session', '{"nama":"Siswa","kelas":"X TP"}'],
-    ['draftlab_students_history', '[{"nama":"Siswa"}]'],
+    ['draftlab_posttest_submissions', '[{"id":"example-result"}]'],
     ['draftlab_lkpd_job1_data', '{"nama":"Siswa","checked":[true,false]}'],
     ['draftlab_post_completed', 'true'],
     ['sdraft-progress', '{"tools":true,"lines":true}']

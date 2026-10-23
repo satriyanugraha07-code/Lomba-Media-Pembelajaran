@@ -1,0 +1,11 @@
+.learning-results-dialog { width: min(820px, calc(100vw - 28px)); max-width: calc(100vw - 28px); max-height: 90dvh; margin: auto; padding: 0; border: 0; border-radius: 20px; background: #fff; color: #153451; }
+.learning-results-dialog::backdrop { background: #163f5a80; backdrop-filter: blur(4px); }
+.learning-results-dialog .rekap-card { max-width: none; max-height: none; border: 0; box-shadow: none; overflow: visible; }
+.learning-results-dialog [hidden] { display: none !important; }
+.learning-results-dialog .rekap-table-container { max-width: 100%; overflow: auto; }
+.learning-results-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 24px 16px; border-bottom: 1px solid #e2e8f0; }
+.learning-results-tabs button { min-height: 44px; padding: 10px 14px; border: 1px solid #dce7f0; border-radius: 12px; background: #fff; color: #536c82; font-family: inherit; font-size: 12px; font-weight: 700; line-height: 1.5; cursor: pointer; }
+.learning-results-tabs button[aria-pressed='true'] { color: #087b96; background: #e8f6fb; border-color: #8ecbdc; }
+.learning-results-dialog button:focus-visible { outline: 3px solid #0b7ea6; outline-offset: 3px; }
+.semester-results-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; font-size: 12px; background: #f4f9fc; }
+.semester-results-note { padding: 16px 24px; font-size: 11px; line-height: 1.9; color: #607b8f; }

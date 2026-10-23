@@ -6,7 +6,6 @@ const revealSelectors = {
   diagnostik: '.diag-hero-card, .diag-cbt-toolbar, .diag-section-tabs, .diag-sec-header, .diag-q-item, .diag-bottom-bar',
   settings: '.utility-intro, .utility-card, .utility-footnote',
   help: '.utility-intro, .utility-card',
-  book: ':scope > .book-library-hero, :scope > .book-draft-panel, :scope > .book-selector-bar, :scope > .book-reader-panel',
   intro: '.intro-opening, .intro-index, .intro-lesson',
   tools: '.panel-header, .tools-showcase > *',
   pencils: '.panel-header, .pencils-layout > *',
@@ -93,7 +92,7 @@ export function initPageMotion() {
   const enterSection = (initial = false) => {
     clearReveals();
     const section = document.querySelector('.app-section.active');
-    if (!section || !canAnimate() || ['etiket', 'projection', 'model3d', 'lkpd', 'book'].includes(section.id)) return;
+    if (!section || !canAnimate() || ['etiket', 'projection', 'model3d', 'lkpd', 'uts', 'uas'].includes(section.id)) return;
 
     if (!initial) {
       document.documentElement.dataset.initialEntry = 'done';

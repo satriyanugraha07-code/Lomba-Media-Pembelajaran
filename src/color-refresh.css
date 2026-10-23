@@ -1,4 +1,4 @@
-/* Brighter SDRAFT palette: color supports scanning without filling lessons with noise. */
+/* Brighter ARCUS palette: color supports scanning without filling lessons with noise. */
 :root {
   --bg-primary: #f3f8ff;
   --text-primary: #153451;
@@ -34,8 +34,7 @@ header.top-header {
   border-bottom: 1px solid #dcebf5;
 }
 .page-title h2 { color: #285b79; }
-.sidebar-toggle-btn, .header-user-badge { background: #fff; border: 1px solid #dcecf5; }
-.user-avatar-circle { background: #ddf5ff; color: #0789ae; }
+.sidebar-toggle-btn { background: #fff; border: 1px solid #dcecf5; }
 
 .studio-hero { border: 1px solid #b5e4f1; box-shadow: 0 18px 38px rgba(10, 117, 155, 0.11); }
 .studio-topics-heading h2 { color: #113e61; }

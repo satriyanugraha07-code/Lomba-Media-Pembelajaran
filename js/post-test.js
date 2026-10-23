@@ -6,8 +6,8 @@
  * ==========================================================================
  */
 
-import { getStudentSession, getScriptUrl } from './auth.js';
-
+import { assessmentStorage, studentProfile } from '../src/auth-session.js';
+import { legacyAttempt, beginLegacyRetry, findRemoteAttempt } from '../src/assessment-sync.js';
 const DRAFT_STORAGE_KEY = 'draftlab_posttest_draft';
 const SUBMISSIONS_STORAGE_KEY = 'draftlab_posttest_submissions';
 const COMPLETED_STORAGE_KEY = 'draftlab_posttest_completed';
@@ -378,7 +378,9 @@ let postTestState = {
  */
 function loadSavedDraft() {
   try {
-    const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+    const remote = findRemoteAttempt('posttest');
+    const saved = remote ? JSON.stringify(remote.answers) : assessmentStorage.getItem(DRAFT_STORAGE_KEY);
+    if (remote) assessmentStorage.setItem('cloud_attempt:posttest', JSON.stringify({id:remote.id,startedAt:remote.startedAt,revision:remote.revision,status:remote.status}));
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed.mcq) postTestState.answers.mcq = parsed.mcq;
@@ -388,15 +390,6 @@ function loadSavedDraft() {
     console.warn('Gagal memuat draft post-test:', e);
   }
 
-  // Load student session from auth
-  const session = getStudentSession();
-  if (session && session.nama) {
-    postTestState.student.nama = session.nama;
-    postTestState.student.absen = session.absen || '';
-    postTestState.student.kelas = session.kelas || 'X T. Pemesinan';
-  } else {
-    postTestState.student.nama = localStorage.getItem('draftlab_student_name') || '';
-  }
 }
 
 /**
@@ -404,10 +397,11 @@ function loadSavedDraft() {
  */
 function saveDraft() {
   try {
-    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(postTestState.answers));
+    assessmentStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(postTestState.answers));
+    legacyAttempt('posttest', postTestState.answers);
     const indicator = document.getElementById('posttest-save-status');
     if (indicator) {
-      indicator.textContent = 'Tersimpan otomatis';
+      indicator.textContent = 'Draf tersimpan · sinkronisasi otomatis';
     }
   } catch (e) {
     console.warn('Gagal menyimpan draf post-test:', e);
@@ -547,12 +541,12 @@ function switchPostTestTab(tabName) {
  * Submit Post-Test
  */
 export async function submitPostTest(isForced = false, forceReason = '') {
+  if (!studentProfile()) return;
   const scores = calculatePostTestScore();
-  const session = getStudentSession() || {};
   const student = {
-    nama: session.nama || postTestState.student.nama || 'Siswa SDRAFT',
-    absen: session.absen || postTestState.student.absen || '-',
-    kelas: session.kelas || postTestState.student.kelas || 'X T. Pemesinan'
+    nama: postTestState.student.nama || 'Peserta Didik',
+    absen: postTestState.student.absen || '-',
+    kelas: postTestState.student.kelas || 'X T. Pemesinan'
   };
 
   const unansweredActual = (20 - Object.keys(postTestState.answers.mcq).length) + (15 - scores.essayAnsweredCount);
@@ -580,156 +574,23 @@ export async function submitPostTest(isForced = false, forceReason = '') {
 
   // 1. Save locally to submissions history
   try {
-    const raw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
+    const raw = assessmentStorage.getItem(SUBMISSIONS_STORAGE_KEY);
     const existing = raw ? JSON.parse(raw) : [];
     existing.unshift(record);
-    localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(existing));
+    assessmentStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(existing));
   } catch (err) {
     console.warn('Gagal menyimpan riwayat penyerahan post-test:', err);
   }
 
   // 2. Mark module completed in app progress tracker
-  localStorage.setItem(COMPLETED_STORAGE_KEY, 'true');
+  assessmentStorage.setItem(COMPLETED_STORAGE_KEY, 'true');
+  legacyAttempt('posttest', postTestState.answers, true, {submissionReason:forceReason || 'Dikumpulkan oleh peserta.'});
   if (typeof window.completeModule === 'function') {
     window.completeModule('quiz', 'Tes Pemahaman (Post-Test Evaluasi Pertemuan 1)');
   }
 
-  // 3. Send to Google Spreadsheet in background
-  sendPostTestToSpreadsheet(record);
-
-  // 4. Render Result Screen
+  // 3. Render Result Screen
   showPostTestResultCard(record);
-}
-
-/**
- * Send post-test record to Google Apps Script Web App
- */
-async function sendPostTestToSpreadsheet(record) {
-  const scriptUrl = getScriptUrl();
-  if (!scriptUrl || scriptUrl.includes('GANTI_DENGAN_URL')) {
-    return;
-  }
-
-  if (scriptUrl.includes('sheetdb.io')) {
-    const row = {
-      'No': 'INCREMENT',
-      'ID Tiket': record.id,
-      'Waktu Selesai (WIB)': record.waktu,
-      'Nama Lengkap Siswa': record.student.nama,
-      'No. Absen': record.student.absen,
-      'Kelas': record.student.kelas,
-      'Skor PG (60)': record.scores.mcqScore,
-      'Benar PG (20)': `${Math.round(record.scores.mcqScore / 3)} / 20`,
-      'Esai Terisi (15)': `${record.scores.essayAnsweredCount} / 15`,
-      'Nilai Esai Guru (40)': '',
-      'TOTAL NILAI (100)': record.scores.estimatedTotalScore,
-      'Predikat Kelulusan': record.scores.mcqScore >= 50 ? 'KOMPETEN (B) ✅' : 'CUKUP (C) ⚠️',
-      'Catatan CBT': record.violations ? `⚠️ ${record.violations}x Pindah Tab` : 'Tertib (0x)'
-    };
-
-    // Columns PG 1-20
-    for (let i = 1; i <= 20; i++) {
-      const key = POST_TEST_MCQ_KEYS[i];
-      const userAns = (record.answers.mcq && record.answers.mcq[i]) ? record.answers.mcq[i] : '-';
-      const colName = `PG ${i} (K: ${key})`;
-      if (userAns === '-') {
-        row[colName] = '-';
-      } else if (userAns === key) {
-        row[colName] = `${userAns} ✅`;
-      } else {
-        row[colName] = `${userAns} ❌ (K: ${key})`;
-      }
-    }
-
-    // Columns Esai 21-35
-    const essayCols = [
-      'Esai 21: Fungsi Standar ISO',
-      'Esai 22: Alasan Standardisasi Internasional',
-      'Esai 23: Gambar Sebagai Bahasa Teknik & Acuan',
-      'Esai 24: Manfaat Gambar Sebelum Mesin',
-      'Esai 25: 5 Sikap Kerja Profesional Gambar',
-      'Esai 26: Alur Ide Desain ke Benda Nyata',
-      'Esai 27: Menjaga Kebersihan Alat & Kertas',
-      'Esai 28: Karakteristik Pensil H vs 2B',
-      'Esai 29: 6 Alat Gambar Teknik & Fungsinya',
-      'Esai 30: Alat & Bahan yang Harus Disiapkan',
-      'Esai 31: Fungsi Etiket & Sudut Kanan Bawah',
-      'Esai 32: 5 Informasi Wajib Dalam Etiket',
-      'Esai 33: Arti Skala 1:1, 1:2, dan 2:1',
-      'Esai 34: Ukuran Kertas A0 s.d. A4 (mm)',
-      'Esai 35: Hubungan Seri A & Hasil A3 Dibagi 2'
-    ];
-    for (let j = 0; j < essayCols.length; j++) {
-      const qNum = 21 + j;
-      row[essayCols[j]] = (record.answers.essay && record.answers.essay[qNum]) ? record.answers.essay[qNum] : '-';
-    }
-
-    try {
-      await fetch(scriptUrl, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ data: [row] })
-      });
-      console.info('[Post-Test SheetDB] Berhasil disimpan di Spreadsheet!');
-    } catch (err) {
-      console.warn('[Post-Test SheetDB] Gagal mengirim:', err);
-    }
-    return;
-  }
-
-  // Format flattened answers for spreadsheet columns
-  const payload = {
-    action: 'posttest',
-    id: record.id,
-    timestamp: record.timestamp,
-    waktuLokal: record.waktu,
-    nama: record.student.nama,
-    absen: record.student.absen,
-    kelas: record.student.kelas,
-    mcqScore: record.scores.mcqScore,
-    mcqScoreFormatted: `${record.scores.mcqScore}/60`,
-    mcqCorrectCount: `${Math.round(record.scores.mcqScore / 3)} / 20`,
-    essayAnsweredCount: record.scores.essayAnsweredCount,
-    essayCountFormatted: `${record.scores.essayAnsweredCount}/15`,
-    estimatedScore: record.scores.estimatedTotalScore,
-    pelanggaranTab: record.violations || 0,
-    statusPengerjaan: record.isForced ? `DISUBMIT OTOMATIS (${record.forceReason})` : 'Selesai Mandiri'
-  };
-
-  // MCQ answers 1-20 with correctness indicator for Google Sheets
-  for (let i = 1; i <= 20; i++) {
-    const key = POST_TEST_MCQ_KEYS[i];
-    const userAns = (record.answers.mcq && record.answers.mcq[i]) ? record.answers.mcq[i] : '-';
-    payload['q' + i] = userAns;
-    if (userAns === '-') {
-      payload['pg_' + i] = '-';
-    } else if (userAns === key) {
-      payload['pg_' + i] = `${userAns} ✅`;
-    } else {
-      payload['pg_' + i] = `${userAns} ❌ (K: ${key})`;
-    }
-  }
-
-  // Essay answers 21-35
-  for (let j = 21; j <= 35; j++) {
-    payload['q' + j] = (record.answers.essay && record.answers.essay[j]) ? record.answers.essay[j] : '-';
-  }
-
-  try {
-    await fetch(scriptUrl, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(payload)
-    });
-  } catch (err) {
-    console.warn('[Post-Test Sync] Gagal mengirim ke Spreadsheet:', err);
-  }
 }
 
 /**
@@ -815,7 +676,7 @@ function renderReviewAccordion(record) {
 }
 
 /**
- * Render Rekap Table for Developer / Teacher Mode
+ * Render locally stored learning results
  */
 export function renderPostTestRekapTable() {
   const tbody = document.getElementById('rekap-posttest-table-body');
@@ -824,7 +685,7 @@ export function renderPostTestRekapTable() {
 
   let submissions = [];
   try {
-    const raw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
+    const raw = assessmentStorage.getItem(SUBMISSIONS_STORAGE_KEY);
     submissions = raw ? JSON.parse(raw) : [];
   } catch (e) {
     submissions = [];
@@ -862,7 +723,7 @@ export function renderPostTestRekapTable() {
 export function exportPostTestToCsv() {
   let submissions = [];
   try {
-    const raw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
+    const raw = assessmentStorage.getItem(SUBMISSIONS_STORAGE_KEY);
     submissions = raw ? JSON.parse(raw) : [];
   } catch (e) {
     submissions = [];
@@ -936,6 +797,8 @@ function escapeHtml(str) {
  * Initialize Post-Test Module
  */
 export function initPostTest() {
+  const profile = studentProfile();
+  if (profile) Object.assign(postTestState.student,{nama:profile.name,kelas:profile.className,absen:profile.absen});
   loadSavedDraft();
 
   // 1. Sync Student Name Display in Post-Test Strip
@@ -945,20 +808,11 @@ export function initPostTest() {
 
   const updateStudentDisplay = () => {
     const s = postTestState.student;
-    if (studentNameDisplay) studentNameDisplay.textContent = s.nama || 'Peserta Didik (Belum Login)';
+    if (studentNameDisplay) studentNameDisplay.textContent = s.nama || 'Peserta Didik';
     if (studentMetaDisplay) studentMetaDisplay.textContent = `Kelas: ${s.kelas} • No. Absen: ${s.absen || '-'}`;
     if (studentAvatarDisplay) studentAvatarDisplay.textContent = (s.nama ? s.nama.charAt(0) : 'P').toUpperCase();
   };
   updateStudentDisplay();
-
-  window.addEventListener('draftlab:student-login', (e) => {
-    if (e.detail) {
-      postTestState.student.nama = e.detail.nama;
-      postTestState.student.absen = e.detail.absen;
-      postTestState.student.kelas = e.detail.kelas;
-      updateStudentDisplay();
-    }
-  });
 
   // 2. Wire Tab Switcher
   const tabMcq = document.getElementById('tab-posttest-mcq');
@@ -1039,7 +893,7 @@ export function initPostTest() {
   // 6. Wire Final Submit Button
   const btnSubmit = document.getElementById('btn-submit-posttest');
   if (btnSubmit) {
-    btnSubmit.addEventListener('click', submitPostTest);
+    btnSubmit.addEventListener('click', () => submitPostTest());
   }
 
   // 7. Wire Print Result Button
@@ -1055,6 +909,11 @@ export function initPostTest() {
   if (btnRetry) {
     btnRetry.addEventListener('click', () => {
       if (confirm('Apakah Anda ingin mengulang pengerjaan tes pemahaman?')) {
+        beginLegacyRetry('posttest');
+        postTestState.answers = {mcq:{},essay:{}};
+        document.querySelectorAll('.posttest-mcq-opt.selected').forEach(node => node.classList.remove('selected'));
+        document.querySelectorAll('#quiz textarea').forEach(node => { node.value = ''; });
+        saveDraft(); updatePostTestProgressUI();
         const formWrap = document.getElementById('posttest-form-view');
         const resultWrap = document.getElementById('posttest-result-view');
         if (formWrap) formWrap.style.display = 'block';
@@ -1065,6 +924,9 @@ export function initPostTest() {
     });
   }
 
+  document.addEventListener('arcus:test-visited', event => { if(event.detail.examId === 'posttest') legacyAttempt('posttest',postTestState.answers); });
+  const remote = findRemoteAttempt('posttest');
+  if (remote?.status === 'submitted') showPostTestResultCard({id:remote.id,student:postTestState.student,scores:calculatePostTestScore(),waktu:new Date(remote.submittedAt).toLocaleString('id-ID'),violations:remote.violations?.length || 0});
   // Initial UI refresh
   updatePostTestProgressUI();
 }

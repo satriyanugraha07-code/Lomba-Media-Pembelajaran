@@ -1,7 +1,6 @@
 import { lkpdMarkup, getLkpdJob } from '../src/lkpd-markup.js';
 import { openLkpdPrintPreview } from '../src/lkpd-print.js';
 import { initLkpdPdfReader } from '../src/lkpd-pdf-reader.js';
-import { getStudentSession as studentSession, studentDraftKey } from '../src/student-session.js';
 
 const ACTIVE_JOB_KEY = 'draftlab_lkpd_active_job';
 
@@ -15,14 +14,13 @@ export function initLkpd() {
   if (!section || section.dataset.lkpdReady === 'true') return;
   section.dataset.lkpdReady = 'true';
   let flushPending = () => {};
-  let loginCurrent = () => {};
-  let logoutCurrent = () => {};
   const mount = (job, focus = false) => {
     flushPending();
+    const pickerScrollTop = section.querySelector('.lkpd-job-selector')?.scrollTop || 0;
     section.innerHTML = lkpdMarkup(job);
+    section.querySelector('.lkpd-job-selector').scrollTop = pickerScrollTop;
     if (job.format === 'pdf') {
       flushPending = initLkpdPdfReader(section.querySelector('[data-source-pdf]'));
-      loginCurrent = logoutCurrent = () => {};
       section.querySelectorAll('[data-lkpd-job]').forEach(button => button.addEventListener('click', () => {
         const next = getLkpdJob(button.dataset.lkpdJob);
         if (next.id === job.id) return;
@@ -32,8 +30,7 @@ export function initLkpd() {
       if (focus) section.querySelector(`[data-lkpd-job="${job.id}"]`)?.focus({ preventScroll: true });
       return;
     }
-    let currentStudent = studentSession();
-    const STORAGE_KEY = studentDraftKey(job.storageKey, currentStudent);
+    const STORAGE_KEY = job.storageKey;
     const patterns = job.patterns;
     const find = id => section.querySelector(`#${id}`);
     const fields = {
@@ -46,11 +43,7 @@ export function initLkpd() {
     let activePattern = 1;
 
     try {
-      let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      if (currentStudent && !Object.keys(saved).length) {
-        const legacy = JSON.parse(localStorage.getItem(job.storageKey) || '{}');
-        if (studentDraftKey(job.storageKey, { nama: legacy.name, kelas: legacy.className, absen: legacy.absen }) === STORAGE_KEY) saved = legacy;
-      }
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
       if (saved && typeof saved === 'object') {
         Object.entries(fields).forEach(([key, field]) => {
           if (typeof saved[key] === 'string' || typeof saved[key] === 'number') field.value = String(saved[key]);
@@ -99,34 +92,9 @@ export function initLkpd() {
         : count === 0 ? 'Centang setelah kamu memeriksa hasil gambarmu.' : `${count} pemeriksaan selesai. Lanjutkan memeriksa bagian lainnya.`;
     };
 
-    const applyStudent = (student, persist = true) => {
-      currentStudent = student && typeof student === 'object' && student.nama ? student : null;
-      const badge = find('lkpd-sync-badge');
-      badge.hidden = !currentStudent;
-      find('lkpd-account-note').hidden = !currentStudent;
-      [fields.name, fields.className, fields.absen].forEach(field => {
-        field.readOnly = Boolean(currentStudent);
-        if (currentStudent) {
-          field.setAttribute('aria-describedby', 'lkpd-sync-text');
-          field.title = 'Identitas mengikuti akun siswa yang sedang masuk.';
-        } else {
-          field.removeAttribute('aria-describedby');
-          field.removeAttribute('title');
-        }
-      });
-      if (currentStudent) {
-        fields.name.value = String(currentStudent.nama);
-        fields.className.value = String(currentStudent.kelas || '');
-        fields.absen.value = String(currentStudent.absen ?? '');
-        find('lkpd-sync-text').textContent = `Akun siswa: ${currentStudent.nama} · ${currentStudent.kelas || 'Kelas belum diisi'} · No. ${currentStudent.absen ?? '—'}`;
-        if (persist) save();
-      }
-      updateSheetIdentity();
-    };
-    applyStudent(currentStudent);
+    updateSheetIdentity();
     updateChecks();
 
-    loginCurrent = logoutCurrent = () => mount(job);
     flushPending = () => { if (saveTimer) save(); };
     section.querySelectorAll('[data-lkpd-job]').forEach(button => button.addEventListener('click', () => {
       const next = getLkpdJob(button.dataset.lkpdJob);
@@ -198,9 +166,6 @@ export function initLkpd() {
 
     const resetDialog = find('lkpd-reset-dialog');
     find('btn-reset-lkpd').addEventListener('click', () => {
-      find('lkpd-reset-description').textContent = currentStudent
-        ? 'Checklist, nilai, paraf, dan catatan akan dikosongkan. Identitas akun siswa yang sedang masuk tetap digunakan.'
-        : 'Nama, kelas, nomor absen, checklist, nilai, paraf, dan catatan akan dikosongkan. Tanggal diubah menjadi hari ini.';
       resetDialog.showModal();
     });
     find('lkpd-reset-cancel').addEventListener('click', () => resetDialog.close());
@@ -208,7 +173,6 @@ export function initLkpd() {
       Object.values(fields).forEach(field => { field.value = ''; });
       fields.date.value = todayText();
       checks.forEach(check => { check.checked = false; });
-      applyStudent(currentStudent, false);
       updateChecks();
       save();
       if (status.dataset.state !== 'error') status.textContent = 'Isian sudah dikosongkan. Kamu bisa mulai lagi.';
@@ -226,7 +190,5 @@ export function initLkpd() {
   let initialJob = getLkpdJob(1);
   try { initialJob = getLkpdJob(localStorage.getItem(ACTIVE_JOB_KEY)); } catch {}
   mount(initialJob);
-  window.addEventListener('draftlab:student-login', event => loginCurrent(event.detail || studentSession()));
-  window.addEventListener('draftlab:student-logout', () => logoutCurrent());
   window.addEventListener('pagehide', () => flushPending());
 }

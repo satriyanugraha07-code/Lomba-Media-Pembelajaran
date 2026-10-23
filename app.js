@@ -1,5 +1,6 @@
 // --- DRAFT-LAB MAIN APP LOGIC ---
 import { isModuleLocked } from './src/module-availability.js';
+import { assessmentStorage, studentProfile } from './src/auth-session.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // --- SPLASH INTRO SCREEN LOGIC ---
@@ -258,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const state = {
     activeTab: 'dashboard',
     progress: {
-      book: false,
       intro: false,
       tools: false,
       pencils: false,
@@ -266,7 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
       etiket: false,
       projection: false,
       model3d: false,
-      quiz: false
+      quiz: false,
+      uts: false,
+      uas: false
     },
     quiz: {
       questions: QUESTION_BANK.slice(0, 5).map((q, idx) => ({
@@ -282,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- LOCAL STORAGE & PROGRESS LOGIC ---
   const loadProgress = () => {
-    const saved = localStorage.getItem('draftlab_progress');
+    const saved = assessmentStorage.getItem('draftlab_progress');
     if (saved) {
       try {
         state.progress = { ...state.progress, ...JSON.parse(saved) };
@@ -294,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const saveProgress = () => {
-    localStorage.setItem('draftlab_progress', JSON.stringify(state.progress));
+    assessmentStorage.setItem('draftlab_progress', JSON.stringify(state.progress));
     updateProgressUI();
   };
 
@@ -310,20 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressBar && progressText) {
       progressBar.style.width = `${percentage}%`;
       progressText.textContent = `${percentage}%`;
-    }
-
-    // Update Badge Level
-    const badgeLevel = document.getElementById('badge-level');
-    if (badgeLevel) {
-      if (percentage === 100) {
-        badgeLevel.textContent = "Chief Draftsman";
-      } else if (percentage >= 60) {
-        badgeLevel.textContent = "Expert Draftsman";
-      } else if (percentage >= 20) {
-        badgeLevel.textContent = "Intermediate Draftsman";
-      } else {
-        badgeLevel.textContent = "Draftsman Apprentice";
-      }
     }
 
     // Update Dashboard Cards status
@@ -374,7 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
       state.progress[moduleName] = true;
       saveProgress();
       const moduleTitles = {
-        book: "Buku Ajar Gambar Teknik Mesin",
         intro: "Pengenalan Gambar Teknik Mesin",
         tools: "Pengenalan Alat Gambar",
         pencils: "Laboratorium Pensil Gambar",
@@ -382,7 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
         etiket: "Etiket Gambar Teknik",
         projection: "Proyeksi Gambar Teknik",
         model3d: "Konversi Model 3D Interaktif",
-        quiz: "Tes Pemahaman (Post-Test Evaluasi Pertemuan 1)"
+        quiz: "Tes Pemahaman (Post-Test Evaluasi Pertemuan 1)",
+        uts: "Tes Tengah Semester",
+        uas: "Tes Akhir Semester"
       };
       const title = customTitle || moduleTitles[moduleName] || "Modul Pembelajaran";
       showToast(`Pencapaian: ${title}`, "Modul berhasil diselesaikan! Peringkat keahlian Anda meningkat.", "🎓");
@@ -415,7 +404,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const titles = {
           diagnostik: "Tes Diagnostik",
           dashboard: "Beranda Belajar",
-          book: "Baca Buku",
           videos: "Video Tutorial",
           intro: "Pengenalan Gambar Teknik",
           tools: "Alat Gambar",
@@ -426,10 +414,12 @@ document.addEventListener('DOMContentLoaded', () => {
           model3d: "Model 3D",
           lkpd: "Lembar Kerja",
           quiz: "Tes Pemahaman",
+          uts: "Tes Tengah Semester",
+          uas: "Tes Akhir Semester",
           settings: "Pengaturan",
           help: "Bantuan"
         };
-        pageTitle.textContent = titles[target] || "SDRAFT";
+        pageTitle.textContent = titles[target] || "ARCUS";
         state.activeTab = target;
         window.scrollTo({ top: 0, behavior: 'auto' });
 
@@ -518,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btnClaimCert.addEventListener('click', () => {
         certModal.style.display = 'flex';
         
-        const savedName = localStorage.getItem('draftlab_student_name') || '';
+        const savedName = studentProfile()?.name || assessmentStorage.getItem('draftlab_certificate_name') || '';
         if (inputStudentName) inputStudentName.value = savedName;
         if (displayStudentName) {
           displayStudentName.textContent = (savedName.trim() || 'NAMA LENGKAP SISWA').toUpperCase();
@@ -545,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       inputStudentName?.addEventListener('input', (e) => {
         const val = e.target.value;
-        localStorage.setItem('draftlab_student_name', val);
+        assessmentStorage.setItem('draftlab_certificate_name', val);
         if (displayStudentName) {
           displayStudentName.textContent = (val.trim() || 'NAMA LENGKAP SISWA').toUpperCase();
         }
@@ -675,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (finalVal === 100) {
         resultMedal.textContent = "🥇";
         resultTitle.textContent = "Luar Biasa! Chief Draftsman!";
-        resultDesc.textContent = `Kamu menjawab semua ${state.quiz.questions.length} pertanyaan dengan benar! Sekarang kamu memegang tingkat kepangkatan tertinggi di SDRAFT.`;
+        resultDesc.textContent = `Kamu menjawab semua ${state.quiz.questions.length} pertanyaan dengan benar! Sekarang kamu memegang tingkat kepangkatan tertinggi di ARCUS.`;
         window.completeModule('quiz');
       } else if (finalVal >= 80) {
         resultMedal.textContent = "🥈";
@@ -699,6 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- INITIALIZE APPLICATION ---
   loadProgress();
+  document.addEventListener('arcus:authenticated', loadProgress);
   initNavigation();
   initQuiz();
 });

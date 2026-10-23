@@ -1,0 +1,547 @@
+/* ============================================================
+   CLEAN UI LAYER
+   Satu tempat untuk merapikan tampilan: lebih sedikit label,
+   tombol, dan teks pengulangan — tanpa menghilangkan materi.
+   Dimuat paling akhir agar menimpa lapisan gaya sebelumnya.
+   ============================================================ */
+
+@media screen {
+  :root {
+    --clean-ink: #16293f;
+    --clean-muted: #5c7186;
+    --clean-soft: #8a9db0;
+    --clean-line: #e4ecf4;
+    --clean-line-strong: #d3e2ee;
+    --clean-surface: #ffffff;
+    --clean-accent: #0b7ea6;
+    --clean-accent-soft: #e8f6fb;
+    --clean-radius: 20px;
+  }
+
+  /* ---------- 1. SIDEBAR: satu ikon, satu label, tanpa hiasan ---------- */
+  .nav-eyebrow { display: none !important; }
+  .nav-group-label {
+    margin: 1.15rem 0.7rem 0.35rem;
+    color: var(--clean-soft);
+    font-size: 0.57rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+  .nav-support .nav-group-label { font-size: 0.57rem; letter-spacing: 0.12em; }
+
+  .nav-menu .nav-item {
+    min-height: 41px;
+    padding: 0.4rem 0.6rem;
+    gap: 0.7rem;
+    border: 0 !important;
+    border-radius: 11px;
+    background: transparent !important;
+    color: #4c6079 !important;
+    font-size: 0.8rem;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  .nav-menu .nav-item::after { content: none !important; display: none !important; }
+  .nav-menu .nav-item > svg {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none !important;
+    color: #7b90a6 !important;
+    stroke-width: 1.7;
+    filter: none !important;
+    transform: none !important;
+  }
+  .nav-menu .nav-item:hover { background: #f1f7fb !important; color: #12566f !important; }
+  .nav-menu .nav-item:hover > svg { color: #0b7ea6 !important; }
+  .nav-menu .nav-item.active,
+  .nav-menu .nav-item.active:hover {
+    background: var(--clean-accent-soft) !important;
+    color: #0a5c7d !important;
+    box-shadow: inset 2px 0 var(--clean-accent) !important;
+    font-weight: 700 !important;
+  }
+  .nav-menu .nav-item.active > svg { color: var(--clean-accent) !important; }
+
+  /* Modul yang belum rilis: cukup ikon kunci kecil, tanpa kalimat tambahan. */
+  .module-nav-status { display: none !important; }
+  .module-nav-lock { margin-left: auto; display: inline-flex; color: #a9b8c6; }
+  .module-nav-lock svg { width: 14px; height: 14px; }
+  .nav-menu .nav-item.module-is-locked { color: #97a7b6 !important; }
+  .nav-menu .nav-item.module-is-locked > svg { color: #a9b8c6 !important; }
+
+  .progress-box { padding: 0.8rem 0.85rem; }
+  .progress-header { font-size: 0.66rem; letter-spacing: 0.02em; }
+  .sidebar-progress-tip { display: none !important; }
+
+  /* ---------- 2. HEADER: judul halaman ringkas ---------- */
+  header.top-header { box-shadow: none; }
+  .page-title h2 {
+    color: #6c8095;
+    font-size: 0.85rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+  }
+
+  /* ---------- 3. DASHBOARD: hero ringkas, kartu tanpa garis warna ---------- */
+  #dashboard { padding: 0.9rem clamp(1rem, 2.6vw, 2.4rem) 3rem !important; }
+  .studio-hero { min-height: clamp(250px, 25vw, 330px) !important; }
+  .studio-hero-copy { padding: 1.9rem 0 1.9rem clamp(1.4rem, 3vw, 3rem) !important; }
+  .studio-hero h1 {
+    font-size: clamp(1.9rem, 3.2vw, 3.1rem) !important;
+    line-height: 1.14 !important;
+    margin-bottom: 0.7rem !important;
+  }
+  .studio-hero-note,
+  .studio-hero-swoosh { display: none !important; }
+  .studio-hero-actions { margin-top: 1.15rem !important; }
+
+  .studio-topics-heading h2 { font-size: 1.1rem !important; }
+  .studio-topics-heading .module-filters {
+    background: #f1f4f8 !important;
+    border: 0 !important;
+  }
+  .studio-grid .studio-card {
+    border: 1px solid var(--clean-line) !important;
+    border-bottom-width: 1px !important;
+    box-shadow: none !important;
+  }
+  .studio-grid .studio-card:hover {
+    border-color: #bcd6e6 !important;
+    box-shadow: 0 10px 24px rgba(21, 62, 92, 0.08) !important;
+  }
+  .studio-card .gamtek-card-title { font-size: 0.82rem !important; }
+  .studio-card-arrow { color: #a9b8c6 !important; font-weight: 600 !important; }
+
+  /* ---------- 4. HEADER HALAMAN MODUL: satu bentuk untuk semua ---------- */
+  #tools .instruments-heading,
+  #pencils .pencil-hero,
+  #lines .line-lesson .line-hero,
+  #etiket .etiket-lesson .etiket-hero,
+  #projection .projection-lesson .projection-hero,
+  #model3d .model3d-hero,
+  #lkpd .lkpd-hero,
+  #videos .video-hero,
+  #intro .intro-opening {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 1.6rem !important;
+    min-height: 0 !important;
+    margin: 0 0 1.5rem !important;
+    padding: 1.5rem 1.7rem !important;
+    border: 1px solid var(--clean-line) !important;
+    border-radius: var(--clean-radius) !important;
+    background: var(--clean-surface) !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    isolation: auto !important;
+  }
+  #tools .instruments-heading::after,
+  #pencils .pencil-hero::after,
+  #lines .line-lesson .line-hero::after,
+  #etiket .etiket-lesson .etiket-hero::after,
+  #projection .projection-lesson .projection-hero::after,
+  #lkpd .lkpd-hero::after,
+  #videos .video-hero::after,
+  #intro .intro-opening::after { content: none !important; }
+
+  /* Label kecil di atas judul tidak perlu; judul sudah menjelaskan. */
+  .instruments-eyebrow,
+  .pencil-eyebrow,
+  .line-eyebrow,
+  .etiket-eyebrow,
+  .projection-eyebrow,
+  .model3d-eyebrow,
+  .lkpd-eyebrow,
+  .video-kicker,
+  .intro-eyebrow,
+  .instrument-hero-swoosh,
+  .pencil-swoosh,
+  .line-hero-swoosh,
+  .etiket-hero-swoosh,
+  .projection-hero-swoosh,
+  .model3d-swoosh,
+  .lkpd-hero-swoosh,
+  .video-swoosh { display: none !important; }
+
+  /* Tulisan tangan di atas ilustrasi: sulit dibaca, cukup ilustrasinya. */
+  .instrument-hero-note,
+  .pencil-hero-note,
+  .line-hero-note,
+  .etiket-hero-note,
+  .projection-hero-note,
+  .lkpd-hero-note,
+  .video-art-note,
+  .model3d-hero-art > span,
+  #intro .intro-hero-visual figcaption { display: none !important; }
+
+  #tools .instruments-heading h2,
+  #pencils .pencil-hero h2,
+  #lines .line-lesson .line-hero h2,
+  #etiket .etiket-lesson .etiket-hero h2,
+  #projection .projection-lesson .projection-hero h2,
+  #model3d .model3d-hero h2,
+  #lkpd .lkpd-hero h2,
+  #videos .video-hero h2,
+  #intro .intro-opening h2 {
+    margin: 0 0 0.45rem !important;
+    color: var(--clean-ink) !important;
+    font-size: clamp(1.45rem, 2.1vw, 1.95rem) !important;
+    font-weight: 800 !important;
+    line-height: 1.22 !important;
+    letter-spacing: -0.03em !important;
+    max-width: 26ch;
+  }
+  #tools .instruments-heading h2 span,
+  #pencils .pencil-hero h2 span,
+  #lines .line-lesson .line-hero h2 span,
+  #etiket .etiket-lesson .etiket-hero h2 span,
+  #projection .projection-lesson .projection-hero h2 span,
+  #model3d .model3d-hero h2 span,
+  #lkpd .lkpd-hero h2 span,
+  #videos .video-hero h2 span,
+  #intro .intro-opening h2 span { color: var(--clean-accent) !important; }
+
+  #tools .instrument-hero-copy > p:last-of-type,
+  #pencils .pencil-hero-copy > p:last-of-type,
+  #lines .line-lesson .line-hero-copy > p:last-of-type,
+  #etiket .etiket-lesson .etiket-hero-copy > p:last-of-type,
+  #projection .projection-lesson .projection-hero-copy > p:last-of-type,
+  #model3d .model3d-hero p:last-of-type,
+  #lkpd .lkpd-hero-copy > p:last-of-type,
+  #videos .video-hero > div > p:last-child,
+  #intro .intro-deck {
+    max-width: 48ch !important;
+    margin: 0 !important;
+    color: var(--clean-muted) !important;
+    font-size: 0.86rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Tombol di dalam hero hanya mengulang aktivitas yang sudah terlihat. */
+  #instrument-hero-start,
+  #pencil-hero-start,
+  #line-hero-start,
+  #etiket-start,
+  #projection-start,
+  #model3d-start,
+  #lkpd-start,
+  #intro .intro-start { display: none !important; }
+
+  /* Ilustrasi hero dibuat kecil dan konsisten. */
+  #tools .instrument-hero-art,
+  #pencils .pencil-hero-art,
+  #lines .line-hero-art,
+  #etiket .etiket-hero-art,
+  #projection .projection-hero-art,
+  #model3d .model3d-hero-art,
+  #lkpd .lkpd-hero-art,
+  #videos .video-hero-art,
+  #intro .intro-hero-visual {
+    position: static !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+  }
+  #tools .instrument-hero-art::before,
+  #pencils .pencil-hero-art::before,
+  #lines .line-hero-art::before,
+  #etiket .etiket-hero-art::before,
+  #projection .projection-hero-art::before,
+  #model3d .model3d-hero-art::before { content: none !important; }
+
+  #tools .instrument-hero-art img,
+  #tools .instrument-hero-art svg,
+  #pencils .pencil-hero-art img,
+  #pencils .pencil-hero-art svg,
+  #pencils #pencil-hero-illustration,
+  #lines .line-hero-art img,
+  #lines .line-hero-art svg,
+  #lines .line-hero-art > div,
+  #etiket .etiket-hero-art img,
+  #etiket .etiket-hero-art svg,
+  #etiket #etiket-hero-art,
+  #projection .projection-hero-art img,
+  #projection .projection-hero-art svg,
+  #projection .projection-hero-art > div,
+  #model3d .model3d-hero-art img,
+  #model3d .model3d-hero-art svg,
+  #lkpd .lkpd-hero-art svg,
+  #videos .video-hero-art img,
+  #intro .intro-hero-visual img {
+    display: block !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: 148px !important;
+    max-height: 148px !important;
+    margin: 0 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
+  #model3d .model3d-hero-art svg,
+  #lkpd .lkpd-hero-art svg { height: 140px !important; }
+
+  /* ---------- 4b. HALAMAN PENGATURAN & BANTUAN ---------- */
+  .utility-intro {
+    padding: 1.5rem 1.7rem !important;
+    border: 1px solid var(--clean-line) !important;
+    border-radius: var(--clean-radius) !important;
+    background: var(--clean-surface) !important;
+  }
+  .utility-eyebrow { display: none !important; }
+  .utility-intro h2 {
+    margin: 0 0 0.4rem !important;
+    color: var(--clean-ink) !important;
+    font-size: clamp(1.45rem, 2.1vw, 1.95rem) !important;
+    line-height: 1.22 !important;
+    letter-spacing: -0.03em !important;
+  }
+  .utility-intro p { color: var(--clean-muted) !important; font-size: 0.86rem !important; }
+  .utility-card { border-color: var(--clean-line) !important; box-shadow: none !important; }
+  .utility-card-icon { background: var(--clean-accent-soft) !important; color: var(--clean-accent) !important; }
+  .utility-card h3 { color: var(--clean-ink) !important; }
+  .utility-link:disabled,
+  .utility-card .module-is-locked {
+    background: #f1f5f9 !important;
+    border-color: var(--clean-line) !important;
+    color: #7b8fa2 !important;
+    font-weight: 600 !important;
+  }
+
+  /* ---------- 5. LABEL MIKRO DI DALAM PANEL ---------- */
+  .pencil-kicker,
+  .line-kicker,
+  .etiket-kicker,
+  .projection-kicker,
+  .model3d-kicker,
+  .lkpd-kicker,
+  .instrument-section-label { display: none !important; }
+
+  .instrument-demo-badge,
+  .pencil-demo-badge,
+  .model3d-tag,
+  .video-count-pill,
+  .etiket-badge { display: none !important; }
+
+  /* Nomor urut dekoratif pada kartu pilihan tidak perlu. */
+  #tools .instrument-card-number,
+  #lines .line-card-number,
+  .pencil-catalog .pencil-grade-index { display: none !important; }
+
+  /* Kartu pilihan: garis aksen hanya muncul saat kartu dipilih. */
+  #tools .instrument-card,
+  #lines .line-lesson .line-card,
+  #etiket .etiket-lesson .etiket-template-card,
+  #pencils .pencil-card {
+    border: 1px solid var(--clean-line) !important;
+    background: var(--clean-surface) !important;
+    box-shadow: none !important;
+  }
+  #tools .instrument-card:hover,
+  #lines .line-lesson .line-card:hover,
+  #etiket .etiket-lesson .etiket-template-card:hover,
+  #pencils .pencil-card:hover { border-color: #bcd6e6 !important; transform: none !important; }
+  #tools .instrument-card.is-selected,
+  #lines .line-lesson .line-card[aria-pressed="true"],
+  #etiket .etiket-lesson .etiket-template-card[aria-pressed="true"],
+  #pencils .pencil-card[aria-pressed="true"] {
+    border-color: var(--clean-accent) !important;
+    box-shadow: inset 0 0 0 1px var(--clean-accent) !important;
+  }
+  #tools .instrument-card-purpose,
+  #lines .line-card-pattern,
+  #etiket .etiket-template-description { color: var(--clean-muted) !important; }
+  #tools .instrument-card-arrow,
+  #lines .line-card-arrow,
+  #etiket .etiket-template-card-title > span { color: #a9b8c6 !important; }
+
+  /* Tag yang mengulang keterangan yang sudah tertulis di kartu. */
+  .projection-method-tag,
+  .video-handwritten { display: none !important; }
+
+  /* Kartu terkunci: cukup ikon kunci + satu kalimat. */
+  .module-card-lock strong { display: none !important; }
+
+  /* Label bab di halaman Pengenalan dibuat tenang. */
+  #intro .intro-lesson-index {
+    padding: 0 !important;
+    background: none !important;
+    color: var(--clean-soft) !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase;
+  }
+  /* Tiga pintasan bab: kartu putih biasa, bukan tiga warna berbeda. */
+  #intro .intro-index a,
+  #intro .intro-index a:nth-of-type(2),
+  #intro .intro-index a:nth-of-type(3) {
+    background: var(--clean-surface) !important;
+    border: 1px solid var(--clean-line) !important;
+    color: var(--clean-ink) !important;
+  }
+  #intro .intro-index a:hover {
+    border-color: #bcd6e6 !important;
+    background: var(--clean-surface) !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  #intro .intro-index a small,
+  #intro .intro-index a:nth-of-type(2) small,
+  #intro .intro-index a:nth-of-type(3) small {
+    background: var(--clean-accent-soft) !important;
+    color: var(--clean-accent) !important;
+    font-weight: 800 !important;
+  }
+  #intro .intro-index a b { color: #a9b8c6 !important; }
+
+  /* Keterangan pengulangan: cukup kontrolnya yang terlihat. */
+  .instrument-demo-note,
+  .instrument-catalog-heading > p,
+  .pencil-small-note,
+  .pencil-comparison-intro,
+  .line-small-note,
+  .line-heading-row > p,
+  .pencil-heading-row > p,
+  .projection-heading-row > p,
+  .etiket-heading-row > p,
+  .etiket-preview-hint,
+  .video-library-note,
+  .video-fallback { display: none !important; }
+
+  /* Judul panel sedikit lebih kecil dan rapat. */
+  .pencil-heading-row h3,
+  .line-heading-row h3,
+  .etiket-heading-row h3,
+  .projection-heading-row h3,
+  .instrument-catalog-heading h3 { letter-spacing: -0.02em; }
+
+  /* ---------- 5b. LEMBAR KERJA: satu baris pemilih job yang tenang ---------- */
+  .lkpd-job-selector {
+    gap: 0.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  .lkpd-job-selector button {
+    border: 1px solid var(--clean-line) !important;
+    background: var(--clean-surface) !important;
+    box-shadow: none !important;
+    padding: 0.75rem 0.95rem !important;
+  }
+  .lkpd-job-selector button[aria-pressed="true"] {
+    border-color: var(--clean-accent) !important;
+    box-shadow: inset 0 0 0 1px var(--clean-accent) !important;
+  }
+  .lkpd-job-selector small { color: var(--clean-muted) !important; }
+  .lkpd-job-strip {
+    border: 1px solid var(--clean-line) !important;
+    background: var(--clean-surface) !important;
+    box-shadow: none !important;
+  }
+  /* Baris job yang hanya mengulang pilihan di atasnya tidak perlu ditampilkan. */
+  .lkpd-job-strip:not(:has(a)) { display: none !important; }
+  .lkpd-panel { border-color: var(--clean-line) !important; box-shadow: none !important; }
+  .lkpd-small-note,
+  .lkpd-panel-intro { color: var(--clean-muted) !important; }
+
+  /* ---------- 5d. VIDEO: satu daftar, tanpa label ganda ---------- */
+  #videos .video-item {
+    border: 1px solid var(--clean-line) !important;
+    box-shadow: none !important;
+  }
+  #videos .video-item[aria-pressed="true"] {
+    border-color: var(--clean-accent) !important;
+    background: var(--clean-accent-soft) !important;
+    box-shadow: inset 0 0 0 1px var(--clean-accent) !important;
+  }
+  #videos .video-item-topic,
+  #videos .video-item-state { color: var(--clean-muted) !important; }
+
+  /* ---------- 5e. BLOK PENJELAS TAMBAHAN: dibuang agar halaman tidak sesak ---------- */
+  /* Kalimat petunjuk yang menjelaskan hal yang sudah jelas dari tombolnya. */
+  #videos .video-watch-info > p:not(.video-fallback),
+  #videos .video-fallback,
+  #pencils .pencil-tip,
+  #tools .instrument-tip,
+  #model3d .model3d-view-help,
+  #model3d .model3d-stage-note,
+  #projection .projection-stage-note,
+  #lkpd .lkpd-sheet-help,
+  #lkpd .lkpd-small-note,
+  #lkpd .lkpd-local-note,
+  #etiket .etiket-preview-hint,
+  #etiket .etiket-warning,
+  .paper-ratio-note,
+  .utility-footnote,
+  .lkpd-job-context,
+  .etiket-caption { display: none !important; }
+
+  /* Tiga kartu "cara belajar" di bawah halaman: mengulang sidebar di sebelahnya. */
+  #model3d .model3d-learning,
+  #projection .projection-learning-grid,
+  #lines .line-quick-rules,
+  #etiket .etiket-quick-rules,
+  #videos .video-tips { display: none !important; }
+
+  /* Catatan panjang berisi beberapa paragraf sekaligus: terlalu berat untuk dibaca. */
+  #pencils .pencil-learning-note { display: none !important; }
+
+  /* Sisa ruang setelah blok terakhir tetap terasa lega. */
+  .app-section.active { gap: 1.35rem; }
+  #pencils .pencil-comparison,
+  #lines .line-challenge,
+  #projection .projection-method-explainer { margin-top: 0; }
+
+  /* ---------- 6. KECIL / PONSEL ---------- */
+  @media (max-width: 760px) {
+    #tools .instruments-heading,
+    #pencils .pencil-hero,
+    #lines .line-lesson .line-hero,
+    #etiket .etiket-lesson .etiket-hero,
+    #projection .projection-lesson .projection-hero,
+    #model3d .model3d-hero,
+    #lkpd .lkpd-hero,
+    #videos .video-hero,
+    #intro .intro-opening {
+      grid-template-columns: minmax(0, 1fr) !important;
+      gap: 0 !important;
+      padding: 1.25rem 1.3rem !important;
+      margin-bottom: 1.2rem !important;
+    }
+    #tools .instrument-hero-art,
+    #pencils .pencil-hero-art,
+    #lines .line-hero-art,
+    #etiket .etiket-hero-art,
+    #projection .projection-hero-art,
+    #model3d .model3d-hero-art,
+    #lkpd .lkpd-hero-art,
+    #videos .video-hero-art,
+    #intro .intro-hero-visual { display: none !important; }
+
+    #tools .instruments-heading h2,
+    #pencils .pencil-hero h2,
+    #lines .line-lesson .line-hero h2,
+    #etiket .etiket-lesson .etiket-hero h2,
+    #projection .projection-lesson .projection-hero h2,
+    #model3d .model3d-hero h2,
+    #lkpd .lkpd-hero h2,
+    #videos .video-hero h2,
+    #intro .intro-opening h2 {
+      font-size: clamp(1.35rem, 6vw, 1.7rem) !important;
+      max-width: none;
+    }
+    .studio-hero { min-height: 0 !important; }
+    .studio-hero-copy { padding: 1.4rem 1.25rem 0 !important; }
+    .studio-hero h1 { font-size: clamp(1.6rem, 7.4vw, 2.1rem) !important; }
+    .studio-topics-heading h2 { font-size: 1rem !important; }
+  }
+}

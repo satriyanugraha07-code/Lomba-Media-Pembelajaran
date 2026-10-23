@@ -6,8 +6,8 @@
  * ==========================================================================
  */
 
-import { getStudentSession, getScriptUrl } from './auth.js';
-
+import { assessmentStorage, studentProfile } from '../src/auth-session.js';
+import { legacyAttempt, findRemoteAttempt } from '../src/assessment-sync.js';
 const DRAFT_STORAGE_KEY = 'draftlab_diagnostik_draft';
 const SUBMISSIONS_STORAGE_KEY = 'draftlab_diagnostik_submissions';
 const COMPLETED_STORAGE_KEY = 'draftlab_diagnostik_completed';
@@ -49,7 +49,9 @@ let diagState = {
  */
 function loadSavedDraft() {
   try {
-    const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+    const remote = findRemoteAttempt('diagnostik');
+    const saved = remote ? JSON.stringify(remote.answers) : assessmentStorage.getItem(DRAFT_STORAGE_KEY);
+    if (remote) assessmentStorage.setItem('cloud_attempt:diagnostik', JSON.stringify({id:remote.id,startedAt:remote.startedAt,revision:remote.revision,status:remote.status}));
     if (saved) {
       const parsed = JSON.parse(saved);
       diagState.answers = { ...diagState.answers, ...parsed };
@@ -58,12 +60,6 @@ function loadSavedDraft() {
     console.warn('Gagal memuat draf jawaban diagnostik:', err);
   }
 
-  const session = getStudentSession();
-  if (session && session.nama) {
-    diagState.student.nama = session.nama;
-    diagState.student.absen = session.absen || '';
-    diagState.student.kelas = session.kelas || 'X T. Pemesinan';
-  }
 }
 
 /**
@@ -71,10 +67,11 @@ function loadSavedDraft() {
  */
 function saveDraft() {
   try {
-    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(diagState.answers));
+    assessmentStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(diagState.answers));
+    legacyAttempt('diagnostik', diagState.answers);
     const indicator = document.getElementById('diag-autosave-status');
     if (indicator) {
-      indicator.textContent = 'Tersimpan otomatis';
+      indicator.textContent = 'Draf tersimpan · sinkronisasi otomatis';
     }
   } catch (err) {
     console.warn('Gagal menyimpan draf:', err);
@@ -194,91 +191,10 @@ export function switchSection(sectionIndex) {
 }
 
 /**
- * Send Diagnostic Submission to Google Sheets Web App
- */
-export async function sendDiagnostikToSpreadsheet(submissionData) {
-  const scriptUrl = getScriptUrl();
-  if (!scriptUrl || scriptUrl.includes('GANTI_DENGAN_URL')) {
-    console.info('[Google Sheets] URL belum disetel, data diagnostik disimpan di browser.');
-    return { success: true, localOnly: true };
-  }
-
-  if (scriptUrl.includes('sheetdb.io')) {
-    const diagRow = {
-      'No': 'INCREMENT',
-      'ID Tiket': submissionData.id,
-      'Waktu Serah (WIB)': submissionData.waktu,
-      'Nama Siswa': submissionData.student.nama,
-      'No. Absen': submissionData.student.absen,
-      'Kelas': submissionData.student.kelas,
-      'Skor PG (25)': submissionData.scores.mcqScore,
-      'Uraian Selesai (4)': `${submissionData.scores.essayAnsweredCount}/4`,
-      'Soal 1': submissionData.answers.q1 || '-',
-      'Soal 2': submissionData.answers.q2 || '-',
-      'Soal 3': submissionData.answers.q3 || '-',
-      'Soal 4': submissionData.answers.q4 || '-',
-      'Soal 5': submissionData.answers.q5 || '-',
-      'Pilihan Soal 6': submissionData.answers.q6_choice || '-',
-      'Alasan Soal 6': submissionData.answers.q6_reason || '-',
-      'Informasi Soal 7': (submissionData.answers.q7_info || []).join('; ') || '-',
-      'Dampak Soal 8': submissionData.answers.q8_impact || '-',
-      'Uraian Kritis Soal 9': submissionData.answers.q9_critical || '-'
-    };
-    try {
-      await fetch(scriptUrl, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ data: [diagRow] })
-      });
-      return { success: true };
-    } catch (e) {
-      console.warn('[Diagnostik SheetDB] Gagal mengirim:', e);
-      return { success: false, error: e };
-    }
-  }
-
-  const payload = {
-    action: 'diagnostik',
-    id: submissionData.id,
-    waktuLokal: submissionData.waktu,
-    nama: submissionData.student.nama,
-    absen: submissionData.student.absen,
-    kelas: submissionData.student.kelas,
-    mcqScore: submissionData.scores.mcqScore,
-    essayAnsweredCount: submissionData.scores.essayAnsweredCount,
-    q1: submissionData.answers.q1,
-    q2: submissionData.answers.q2,
-    q3: submissionData.answers.q3,
-    q4: submissionData.answers.q4,
-    q5: submissionData.answers.q5,
-    q6_choice: submissionData.answers.q6_choice,
-    q6_reason: submissionData.answers.q6_reason,
-    q7_info: submissionData.answers.q7_info.join('; '),
-    q8_impact: submissionData.answers.q8_impact,
-    q9_critical: submissionData.answers.q9_critical
-  };
-
-  try {
-    await fetch(scriptUrl, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    return { success: true };
-  } catch (err) {
-    console.warn('Gagal sinkronisasi diagnostik ke Google Spreadsheet:', err);
-    return { success: false, error: err };
-  }
-}
-
-/**
  * Handle Final Submission of the Diagnostic Test
  */
 export async function submitDiagnosticTest() {
+  if (!studentProfile()) return;
   const student = diagState.student;
   if (!student.nama || !student.absen) {
     alert('Harap pastikan Nama Lengkap dan No. Absen sudah terisi di bagian atas lembar tes.');
@@ -314,16 +230,16 @@ export async function submitDiagnosticTest() {
   };
 
   try {
-    const existingRaw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
+    const existingRaw = assessmentStorage.getItem(SUBMISSIONS_STORAGE_KEY);
     const existing = existingRaw ? JSON.parse(existingRaw) : [];
     existing.unshift(submissionRecord);
-    localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(existing));
+    assessmentStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(existing));
   } catch (e) {
     console.warn('Gagal menyimpan riwayat penyerahan:', e);
   }
 
-  localStorage.setItem(COMPLETED_STORAGE_KEY, 'true');
-  sendDiagnostikToSpreadsheet(submissionRecord);
+  assessmentStorage.setItem(COMPLETED_STORAGE_KEY, 'true');
+  legacyAttempt('diagnostik', diagState.answers, true);
 
   showResultCard(submissionRecord);
 }
@@ -379,7 +295,7 @@ export function renderDiagnostikRekapTable() {
 
   let submissions = [];
   try {
-    const raw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
+    const raw = assessmentStorage.getItem(SUBMISSIONS_STORAGE_KEY);
     submissions = raw ? JSON.parse(raw) : [];
   } catch (e) {
     submissions = [];
@@ -414,7 +330,7 @@ export function renderDiagnostikRekapTable() {
 export function exportDiagnostikToCsv() {
   let submissions = [];
   try {
-    const raw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
+    const raw = assessmentStorage.getItem(SUBMISSIONS_STORAGE_KEY);
     submissions = raw ? JSON.parse(raw) : [];
   } catch (e) {
     submissions = [];
@@ -462,7 +378,7 @@ export function exportDiagnostikToCsv() {
   const link = document.createElement('a');
   const now = new Date().toISOString().slice(0, 10);
   link.setAttribute('href', url);
-  link.setAttribute('download', `Rekap_Tes_Diagnostik_SDRAFT_${now}.csv`);
+  link.setAttribute('download', `Rekap_Tes_Diagnostik_ARCUS_${now}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -479,6 +395,8 @@ function escapeHtml(str) {
 }
 
 export function initDiagnostik() {
+  const profile = studentProfile();
+  if (profile) Object.assign(diagState.student, {nama:profile.name,kelas:profile.className,absen:profile.absen});
   loadSavedDraft();
 
   // 1. Hook MCQ Options (Soal 1 - 5)
@@ -565,35 +483,26 @@ export function initDiagnostik() {
   const inKelas = document.getElementById('diag-student-kelas-input');
 
   if (inName) {
+    inName.readOnly = Boolean(profile);
     inName.value = diagState.student.nama;
     inName.addEventListener('input', (e) => {
       diagState.student.nama = e.target.value;
     });
   }
   if (inAbsen) {
+    inAbsen.readOnly = Boolean(profile);
     inAbsen.value = diagState.student.absen;
     inAbsen.addEventListener('input', (e) => {
       diagState.student.absen = e.target.value;
     });
   }
   if (inKelas) {
+    inKelas.readOnly = Boolean(profile);
     inKelas.value = diagState.student.kelas;
     inKelas.addEventListener('input', (e) => {
       diagState.student.kelas = e.target.value;
     });
   }
-
-  window.addEventListener('draftlab:student-login', (e) => {
-    const data = e.detail;
-    if (data) {
-      diagState.student.nama = data.nama || '';
-      diagState.student.absen = data.absen || '';
-      diagState.student.kelas = data.kelas || 'X T. Pemesinan';
-      if (inName) inName.value = diagState.student.nama;
-      if (inAbsen) inAbsen.value = diagState.student.absen;
-      if (inKelas) inKelas.value = diagState.student.kelas;
-    }
-  });
 
   // 7. Section Tabs & Navigator Buttons
   const secTabs = document.querySelectorAll('.diag-sec-tab');
@@ -646,5 +555,8 @@ export function initDiagnostik() {
     });
   }
 
+  document.addEventListener('arcus:test-visited', event => { if(event.detail.examId === 'diagnostik') legacyAttempt('diagnostik',diagState.answers); });
+  const remote = findRemoteAttempt('diagnostik');
+  if (remote?.status === 'submitted') showResultCard({id:remote.id,student:diagState.student,scores:calculateScores()});
   updateProgressUI();
 }

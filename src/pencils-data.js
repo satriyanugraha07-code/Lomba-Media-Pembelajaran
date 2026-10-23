@@ -37,7 +37,7 @@ export function pencilDrawing(grade, key) {
     <path d="M37-12H212Q218-12 220-5H37Z" fill="#fff" opacity=".29"/>
     <path d="M37 5H220V6Q220 12 212 12H37Z" fill="#153451" opacity=".13"/>
     <path d="M198-12V12M202-12V12" stroke="#fff" stroke-width="1.5" opacity=".58"/>
-    <text x="78" y="3" fill="#fff" font-family="sans-serif" font-weight="700" font-size="6" letter-spacing="1.2">SDRAFT</text>
+    <text x="78" y="3" fill="#fff" font-family="sans-serif" font-weight="700" font-size="6" letter-spacing="1.2">ARCUS</text>
     <text x="178" y="4" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800" font-size="11">${grade.name}</text>`;
 }
 
