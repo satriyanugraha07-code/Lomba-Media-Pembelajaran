@@ -101,11 +101,16 @@ function renderIdentity(session) {
   let bar = document.getElementById('session-bar');
   if (!bar) { bar = document.createElement('div'); bar.id = 'session-bar'; bar.className = 'session-bar'; document.querySelector('.top-header').append(bar); }
   bar.replaceChildren();
+  bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Akun aktif');
+  const avatar = document.createElement('span'); avatar.className = 'session-avatar'; avatar.setAttribute('aria-hidden', 'true');
+  avatar.textContent = session.profile.name.trim().split(/\s+/).slice(0, 2).map(part => Array.from(part)[0] || '').join('').toLocaleUpperCase('id-ID');
   const identity = document.createElement('div'), name = document.createElement('strong'), meta = document.createElement('span');
+  identity.className = 'session-identity'; meta.className = 'session-meta';
   name.textContent = session.profile.name; meta.textContent = session.role === 'teacher' ? 'Guru' : `${session.profile.className} · No. ${session.profile.absen}`;
-  identity.append(name, meta);
+  name.title = name.textContent; meta.title = meta.textContent;
   const sync = document.createElement('span'); sync.id = 'cloud-sync-status'; sync.setAttribute('role', 'status');
-  const logout = document.createElement('button'); logout.type = 'button'; logout.textContent = 'Keluar';
+  identity.append(name, meta, sync);
+  const logout = document.createElement('button'); logout.className = 'session-logout'; logout.type = 'button'; logout.textContent = 'Keluar';
   logout.addEventListener('click', async () => {
     if (document.body.classList.contains('semester-exam-active')) { alert('Kumpulkan jawaban ujian sebelum keluar.'); return; }
     logout.disabled = true;
@@ -113,7 +118,7 @@ function renderIdentity(session) {
     cloudRequest('logout', {}, session.token).catch(() => {});
     sessionStorage.removeItem(AUTH_SESSION_KEY); location.reload();
   });
-  bar.append(identity, sync, logout); updateSyncStatus(getSyncState());
+  bar.append(avatar, identity, logout); updateSyncStatus(getSyncState());
   document.body.dataset.accountRole = session.role;
 }
 
