@@ -41,7 +41,7 @@ function outline(id) {
   return `M0 0H${width}V${height}H0Z`;
 }
 
-function projectedShape(id, { x = 0, y = 0, scale = 1, colored = true } = {}) {
+export function projectedShape(id, { x = 0, y = 0, scale = 1, colored = true } = {}) {
   const info = PROJECTION_VIEWS[id];
   const detail = id === 'top' || id === 'bottom' ? 'M60 0V60' : id === 'right' || id === 'left' ? 'M0 60H60' : '';
   const hidden = id === 'left' || id === 'bottom';

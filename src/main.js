@@ -3,7 +3,11 @@ import '../js/tools.js';
 import '../js/pencils.js';
 import '../js/etiket.js';
 import '../js/lines.js';
+import { initViews } from './views.js';
+import './views.css';
 import '../js/projection.js';
+import { initPictorial } from './pictorial.js';
+import './pictorial.css';
 import '../js/model-3d.js';
 import '../js/intro.js';
 import { initLkpd } from '../js/lkpd.js';
@@ -56,6 +60,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     initHeroScene();
   }
   if (!isModuleLocked('lkpd')) initLkpd();
+  if (!isModuleLocked('views')) initViews();
+  if (!isModuleLocked('pictorial')) initPictorial();
   initVideoTutorial();
   if (!isModuleLocked('diagnostik')) initDiagnostik();
   if (!isModuleLocked('quiz')) initPostTest();
@@ -90,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   const categories = {
-    videos: 'materi', intro: 'materi', lines: 'materi',
+    videos: 'materi', intro: 'materi', lines: 'materi', views: 'materi', pictorial: 'materi',
     tools: 'praktik', pencils: 'praktik', etiket: 'praktik', projection: 'praktik', model3d: 'praktik', lkpd: 'praktik',
     quiz: 'evaluasi', uts: 'evaluasi', uas: 'evaluasi'
   };

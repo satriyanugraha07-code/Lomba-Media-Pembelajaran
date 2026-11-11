@@ -95,9 +95,17 @@
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 14h20M13 14v6M2 9h20M8 4v5"/></svg>
           <span>Etiket</span>
         </div>
+        <div class="nav-item" data-target="views">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 3h10v7H3zM3 14h5v3h5v4H3zM17 14h4v7h-4zM17 17h4"/></svg>
+          <span>Pandangan Benda</span>
+        </div>
         <div class="nav-item" data-target="projection">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="3" width="8" height="8" rx="1"/><circle cx="6" cy="7" r="2"/><rect x="14" y="3" width="8" height="8" rx="1"/><path d="m16 9 2-4 2 4M2 15h8v7H2zM14 15h8v7h-8zM6 16v5m-2-3h4m8 1h4"/></svg>
-          <span>Proyeksi</span>
+          <span>Proyeksi Ortogonal</span>
+        </div>
+        <div class="nav-item" data-target="pictorial">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 7 4v8l-7 4-7-4V7l7-4ZM5 7l7 4 7-4m-7 4v8M3 21h18"/></svg>
+          <span>Proyeksi Piktorial</span>
         </div>
         <div class="nav-item" data-target="model3d">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Z"/><path d="m3 7 9 5 9-5M12 12v10"/></svg>
@@ -667,9 +675,17 @@
               <span class="studio-card-art studio-art-lilac"><img src="/ICON/Etiket.png" alt="" width="160" height="140" loading="lazy"></span>
               <span class="studio-card-bottom"><span class="gamtek-card-title">Buat etiket</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
             </button>
+            <button type="button" class="module-card studio-card" data-module="views">
+              <span class="studio-card-art studio-art-blue"><img src="/ICON/papan-gambar.png" alt="" width="160" height="140" loading="lazy"></span>
+              <span class="studio-card-bottom"><span class="gamtek-card-title">Pandangan Benda</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
+            </button>
             <button type="button" class="module-card studio-card" data-module="projection">
               <span class="studio-card-art studio-art-peach"><img src="/ICON/Proyeksi.png" alt="" width="160" height="140" loading="lazy"></span>
-              <span class="studio-card-bottom"><span class="gamtek-card-title">Proyeksi</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
+              <span class="studio-card-bottom"><span class="gamtek-card-title">Proyeksi Ortogonal</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
+            </button>
+            <button type="button" class="module-card studio-card" data-module="pictorial">
+              <span class="studio-card-art studio-art-mint"><img src="/ICON/prespektif.png" alt="" width="160" height="140" loading="lazy"></span>
+              <span class="studio-card-bottom"><span class="gamtek-card-title">Proyeksi Piktorial</span><span class="studio-card-arrow" aria-hidden="true">↗</span></span>
             </button>
             <button type="button" class="module-card studio-card" data-module="model3d">
               <span class="studio-card-art studio-art-mint">
@@ -1155,8 +1171,9 @@
       <!-- ================= ETIKET ISO SECTION ================= -->
       <section id="etiket" class="app-section" aria-label="Etiket gambar teknik"></section>
 
-      <!-- ================= PROYEKSI ORTHOGONAL SECTION ================= -->
-      <section id="projection" class="app-section" aria-label="Proyeksi gambar teknik"></section>
+      <section id="views" class="app-section" aria-label="Pandangan benda"></section>
+      <section id="projection" class="app-section" aria-label="Proyeksi ortogonal"></section>
+      <section id="pictorial" class="app-section" aria-label="Proyeksi piktorial"></section>
 
       <!-- ================= CONTOH KONVERSI 2D KE 3D ================= -->
       <section id="model3d" class="app-section"></section>

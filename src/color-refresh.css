@@ -64,10 +64,12 @@ header.top-header {
 .studio-grid .studio-card:nth-child(4) { --card-accent: #bb7b0e; --card-glow: rgba(187, 123, 14, 0.2); }
 .studio-grid .studio-card:nth-child(5) { --card-accent: #5974ca; --card-glow: rgba(89, 116, 202, 0.19); }
 .studio-grid .studio-card:nth-child(6) { --card-accent: #8251be; --card-glow: rgba(130, 81, 190, 0.19); }
-.studio-grid .studio-card:nth-child(7) { --card-accent: #387cc6; --card-glow: rgba(56, 124, 198, 0.19); }
-.studio-grid .studio-card:nth-child(8) { --card-accent: #088d9f; --card-glow: rgba(8, 141, 159, 0.2); }
-.studio-grid .studio-card:nth-child(9) { --card-accent: #b47717; --card-glow: rgba(180, 119, 23, 0.2); }
-.studio-grid .studio-card:nth-child(10) { --card-accent: #15926b; --card-glow: rgba(21, 146, 107, 0.19); }
+.studio-grid .studio-card[data-module="views"] { --card-accent: #258b79; --card-glow: rgba(37, 139, 121, 0.18); }
+.studio-grid .studio-card[data-module="projection"] { --card-accent: #387cc6; --card-glow: rgba(56, 124, 198, 0.19); }
+.studio-grid .studio-card[data-module="pictorial"] { --card-accent: #267993; --card-glow: rgba(38, 121, 147, 0.19); }
+.studio-grid .studio-card[data-module="model3d"] { --card-accent: #088d9f; --card-glow: rgba(8, 141, 159, 0.2); }
+.studio-grid .studio-card[data-module="lkpd"] { --card-accent: #b47717; --card-glow: rgba(180, 119, 23, 0.2); }
+.studio-grid .studio-card[data-module="quiz"] { --card-accent: #15926b; --card-glow: rgba(21, 146, 107, 0.19); }
 
 .studio-grid .studio-card:nth-child(1) .studio-card-art { background: linear-gradient(140deg, #dff8ff, #aee9f6); }
 .studio-grid .studio-card:nth-child(2) .studio-card-art { background: linear-gradient(140deg, #fff0e8, #ffd0bb); }
@@ -75,10 +77,12 @@ header.top-header {
 .studio-grid .studio-card:nth-child(4) .studio-card-art { background: linear-gradient(140deg, #fff6db, #ffe09b); }
 .studio-grid .studio-card:nth-child(5) .studio-card-art { background: linear-gradient(140deg, #eaf2ff, #bbd4ff); }
 .studio-grid .studio-card:nth-child(6) .studio-card-art { background: linear-gradient(140deg, #f3eaff, #dac4fc); }
-.studio-grid .studio-card:nth-child(7) .studio-card-art { background: linear-gradient(140deg, #e4f2ff, #afd8fb); }
-.studio-grid .studio-card:nth-child(8) .studio-card-art { background: linear-gradient(140deg, #e0fbf9, #a8e8e5); }
-.studio-grid .studio-card:nth-child(9) .studio-card-art { background: linear-gradient(140deg, #fff4d9, #ffdfa0); }
-.studio-grid .studio-card:nth-child(10) .studio-card-art { background: linear-gradient(140deg, #e4faec, #aeeac9); }
+.studio-grid .studio-card[data-module="views"] .studio-card-art { background: linear-gradient(140deg, #e5faf3, #b1e5d7); }
+.studio-grid .studio-card[data-module="projection"] .studio-card-art { background: linear-gradient(140deg, #e4f2ff, #afd8fb); }
+.studio-grid .studio-card[data-module="pictorial"] .studio-card-art { background: linear-gradient(140deg, #e7f7ff, #abd6e9); }
+.studio-grid .studio-card[data-module="model3d"] .studio-card-art { background: linear-gradient(140deg, #e0fbf9, #a8e8e5); }
+.studio-grid .studio-card[data-module="lkpd"] .studio-card-art { background: linear-gradient(140deg, #fff4d9, #ffdfa0); }
+.studio-grid .studio-card[data-module="quiz"] .studio-card-art { background: linear-gradient(140deg, #e4faec, #aeeac9); }
 
 .studio-card-art { position: relative; }
 .studio-card-art::before,
